@@ -1,0 +1,10 @@
+{
+    "env": {
+        "MYSQL_USER": "root",
+        "MYSQL_PASSWORD": "",
+        "MYSQL_DATABASE": "morangando",
+        "MYSQL_HOST": "localhost",
+        "MYSQL_PORT": 3308,
+        "JWT_KEY": "morangando1234566"
+    }
+}

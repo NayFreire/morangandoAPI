@@ -4,7 +4,7 @@ const morgan = require('morgan')
 const bodyParser = require('body-parser')
 
 // const rotasUsuarios = require('./routes/usuarios')
-// const rotasFornecedores = require('./routes/fornecedores')
+const rotasFornecedores = require('./routes/fornecedores')
 // const rotasClientes = require('./routes/clientes')
 const rotasProdutos = require('./routes/produtos')
 
@@ -27,7 +27,7 @@ app.use((req, res, next) => {
 })
 
 // app.use('/usuarios', rotasUsuarios)
-// app.use('/fornecedores', rotasFornecedores)
+app.use('/fornecedores', rotasFornecedores)
 // app.use('/clientes', rotasClientes)
 app.use('/produtos', rotasProdutos)
 

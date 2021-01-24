@@ -171,7 +171,7 @@ exports.deleteProduto = (req, res, next) => {
         conn.query('SELECT * FROM produto WHERE idProduto = ?',[req.body.idProduto], (error, result, fields) => {
             if(result.length == 0){
                 return res.status(404).send({
-                    mensagem: "Não foi encontrado produto com o ID passado",
+                    mensagem: "Não foi encontrado produto com o ID passado"
                 })
             }
             else{

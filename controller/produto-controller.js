@@ -1,5 +1,6 @@
 const mysql = require('../mysql').pool
 
+//RETORNA TODOS OS PRODUTOS
 exports.getProdutos = (req, res, next) => {
     mysql.getConnection((error, conn) => {
         if(error){
@@ -36,6 +37,7 @@ exports.getProdutos = (req, res, next) => {
     })
 }
 
+//RETORNA UM PRODUTO ESPECÍFICO
 exports.getProduto = (req, res, next) => {
     mysql.getConnection((error, conn) => {
         if(error){
@@ -77,6 +79,7 @@ exports.getProduto = (req, res, next) => {
     })
 }
 
+//INSERE PRODUTO
 exports.postProdutos = (req, res, next) => {
     console.log(req.usuario) 
     mysql.getConnection((error, conn) => {
@@ -95,7 +98,6 @@ exports.postProdutos = (req, res, next) => {
                     response: null
                 })
             }
-
 
             console.log(result)
             const response = {
@@ -118,6 +120,7 @@ exports.postProdutos = (req, res, next) => {
     })
 }
 
+//ATUALIZA UM PRODUTO
 exports.updateProduto = (req, res, next) => {
     mysql.getConnection((error, conn) => {
         if(error){
@@ -156,6 +159,7 @@ exports.updateProduto = (req, res, next) => {
     })
 }
 
+//DELETA UM PRODUTO
 exports.deleteProduto = (req, res, next) => {
     mysql.getConnection((error, conn) => {
         if(error){
@@ -184,12 +188,13 @@ exports.deleteProduto = (req, res, next) => {
                     const response = {
                         mensagem: "Produto removido com sucesso",
                         request: {
-                            tipo: 'POST',
+                            tipo: 'DELETE',
                             descricao: "Deleta um produto",
-                            url: "http://localhost:3008/produtos",
+                            url: "http://localhost:3300/produtos",
                             body: {
                                 nome: 'String',
-                                preco: 'Number'
+                                tipo: 'String',
+                                qtdEstoque: 'Number'
                             }
                         }
                     }

@@ -57,3 +57,58 @@ exports.postFuncionario = (req, res, next) => {
         })
     })
 }
+
+exports.loginFuncionario = (req, res, next) => {
+    mysql.getConnection((error, conn) => {
+        if(error){
+            return res.status(500).send({
+                error: error
+            })
+        }
+
+        conn.query('SELECT * FROM funcionarios WHERE username = ?', [req.body.username], (error, resultBusca, fields) => {
+            conn.release();
+            
+            if(error){
+                return res.status(500).send({
+                    error: error
+                })
+            }
+
+            if(resultBusca.length < 1){
+                return res.status(401).send({
+                    mensagem: "Falha na autenticação: erro no user name"
+                })
+            }
+
+            bcrypt.compare(req.body.senha, resultBusca[0].senha, (err, result) => {
+                if(err){
+                    return res.status(401).send({
+                        mensagem: "Falha na autenticação: erro"
+                    })
+                }
+                console.log(resultBusca)
+                console.log(result)
+                console.log(req.body.senha)
+                if(result){
+                    const token = jwt.sign({
+                        idFuncionario: resultBusca[0].idFuncionarios,
+                        username: resultBusca[0].username,
+                        status: resultBusca[0].status
+                    }, process.env.JWT_KEY, 
+                    {
+                        expiresIn: "1h"
+                    })
+                    return res.status(200).send({
+                        mensagem: "Autenticado com sucesso",
+                        token: token
+                    })
+                }
+
+                return res.status(401).send({
+                    mensagem: "Falha na autenticação"
+                })
+            })
+        })
+    })
+}

@@ -5,8 +5,8 @@ const clienteController = require('../controller/cliente-controller')
 
 router.get('/', clienteController.getClientes)
 router.get('/:idColab', clienteController.getCliente)
-router.post('/', clienteController.postCliente)
-router.patch('/', clienteController.updateCliente)
-router.delete('/', clienteController.deleteCliente)
+router.post('/', login.verificacaoAdm, clienteController.postCliente)
+router.patch('/', login.verificacaoAdm, clienteController.updateCliente)
+router.delete('/', login.verificacaoAdm, clienteController.deleteCliente)
 
 module.exports = router

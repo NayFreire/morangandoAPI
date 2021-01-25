@@ -255,7 +255,7 @@ exports.deleteFornecedor = (req, res, next) => {
                                     bairro: 'String',
                                     email: 'String',
                                     telefone: 'Number',
-                                    cpf: "String"
+                                    cpf: 'String'
                                 }
                             }
                         }

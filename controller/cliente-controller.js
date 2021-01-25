@@ -52,7 +52,58 @@ exports.getClientes = (req, res, next) => {
 }
 
 exports.getCliente = (req, res, next) => {
-    
+    mysql.getConnection((error, conn) => {
+        if(error){
+            return res.status(500).send({
+                error: error
+            })
+        }
+
+        conn.query(`SELECT 
+                    colabs.idColab, 
+                    colabs.nome, 
+                    colabs.cidade, 
+                    colabs.bairro, 
+                    colabs.email, 
+                    colabs.telefone, 
+                    cliente.cnpj 
+                    FROM colabs INNER JOIN cliente 
+                    ON idColab = colabClienteId
+                    AND idColab = ?`, [req.params.idColab], (error, result, fields) => {
+            conn.release()
+            if(error){
+                return res.status(500).send({
+                    error: error
+                })
+            }
+
+            if(result.length == 0){
+                return res.status(404).send({
+                    mensagem: "Não foi encontrado produto com esse ID"
+                })
+            }
+
+            const response = {
+                mensagem: "Cliente encontrado",
+                cliente: {
+                        idColab: result[0].idColab,
+                        nome: result[0].nome,
+                        cidade: result[0].cidade,
+                        bairro: result[0].bairro,
+                        email: result[0].email,
+                        telefone: result[0].telefone,
+                        cnpj: result[0].cnpj,
+                        request: {
+                            tipo: 'GET',
+                            descricao: 'Retorna todos os fornecedores',
+                            url: 'http://localhost:3300/clientes/' + result[0].idColab
+                        }
+                }
+            }
+
+            return res.status(200).send({response})
+        })
+    })
 }
 
 exports.postCliente = (req, res, next) => {
@@ -104,9 +155,112 @@ exports.postCliente = (req, res, next) => {
 }
 
 exports.updateCliente = (req, res, next) => {
-    
+    mysql.getConnection((error, conn) => {
+        if(error){
+            return res.status(500).send({
+                error: error
+            })
+        }
+        
+        conn.query('UPDATE colabs SET nome = ?, cidade = ?, bairro = ?, email = ?, telefone = ? WHERE idColab = ? ', [req.body.nome, req.body.cidade, req.body.bairro, req.body.email, req.body.telefone, req.body.idColab], (error, result1, fields) => {
+            if(error){
+                return res.status(500).send({
+                    error: error,
+                    response: null
+                })
+            }
+
+            console.log(result1)
+
+            conn.query('UPDATE cliente SET cnpj = ? WHERE colabClienteId = ?', [req.body.cnpj, req.body.idColab], (error, result, fields) => {
+                conn.release();
+
+                if(error){
+                    return res.status(500).send({
+                        error: error,
+                        response: null
+                    })
+                }
+
+                const response = {
+                    mensagem: 'Cliente atualizado com sucesso',
+                    idColab: req.body.idColab,
+                    nome: req.body.nome,
+                    cidade: req.body.cidade,
+                    bairro: req.body.bairro,
+                    email: req.body.email,
+                    telefone: req.body.telefone,
+                    cpf: req.body.cpf,
+                    request: {
+                        tipo: 'GET',
+                        descricao: 'Retorna os dados de um fornecedor',
+                        url: 'http://localhost:3300/clientes/' + req.body.idColab
+                    }
+                }
+                return res.status(201).send({response})
+            })
+            
+        })
+    })
 }
 
 exports.deleteCliente = (req, res, next) => {
-    
+    mysql.getConnection((error, conn) => {
+        if(error){
+            return res.status(500).send({
+                error: error
+            })
+        }
+
+        conn.query('SELECT * FROM colabs WHERE idColab = ?', [req.body.idColab], (error, resultBusca, fields) => {
+            console.log(resultBusca)
+            if(resultBusca.length == 0){
+                return res.status(404).send({
+                    mensagem: "Não foi encontrado fornecedor com o ID passado"
+                })
+            }
+            else{
+                conn.query('DELETE FROM colabs WHERE idColab = ?', [req.body.idColab], (error, result1, fields) => {
+                    if(error){
+                        return res.status(500).send({
+                            error: error,
+                            response: null
+                        })
+                    }
+        
+                    conn.query('DELETE FROM cliente WHERE colabClienteId = ?', [req.body.idColab], (error, result2, fields) => {
+                        conn.release();
+        
+                        if(error){
+                            return res.status(500).send({
+                                error: error,
+                                response: null
+                            })
+                        }
+        
+                        const response = {
+                            mensagem: 'Cliente deletado com sucesso',
+                            request: {
+                                tipo: 'GET',
+                                descricao: 'Retorna todos os fornecedores',
+                                url: 'http://localhost:3300/fornecedores/',
+                                body: {
+                                    nome: 'String',
+                                    cidade: 'String',
+                                    bairro: 'String',
+                                    email: 'String',
+                                    telefone: 'Number',
+                                    cpf: 'String'
+                                }
+                            }
+                        }
+                        return res.status(201).send({response})
+                    })
+                    
+                })
+            }
+        })
+        
+        
+    })
 }

@@ -94,8 +94,8 @@ exports.getFornecedor = (req, res, next) => {
                             ON fornecedor_tem_produto.colabFId = fornecedor.colabFornecedorId 
                             INNER JOIN produto 
                             ON fornecedor_tem_produto.produtoId = produto.idProduto 
-                            WHERE colabs.idColab = ?`, [req.body.idColab], (error, result1, fields) => {
-                    console.log('param: ' + req.param.idColab)
+                            WHERE colabs.idColab = ?`, [req.params.idColab], (error, result1, fields) => {
+                    console.log('param: ' + req.params.idColab)
                     conn.release()
                     if(error){
                         return res.status(500).send({

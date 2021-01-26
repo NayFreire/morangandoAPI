@@ -1,5 +1,5 @@
 const mysql = require('../mysql').pool;
-const bcrypt = require('bcrypt')
+const bcrypt = require('bcrypt-nodejs')
 const jwt = require('jsonwebtoken')
 
 exports.postFuncionario = (req, res, next) => {

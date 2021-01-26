@@ -143,3 +143,50 @@ exports.postEntrada = (req, res, next) => {
         })
     })
 }
+
+exports.updateEntrada = (req, res, next) => {
+    mysql.getConnection((error, conn) => {
+        if(error){
+            return res.status(500).send({
+                error: error
+            })
+        }
+
+        conn.query('SELECT * FROM entrada WHERE idEntrada = ?', [req.params.idEntrada], (error, result, fields) => {
+            if(error){
+                return res.status(500).send({
+                    error: error
+                })
+            }
+
+            if(result.length == 0){
+                return res.status(404).send({
+                    mensagem: "Não foi encontrada entrada com esse ID"
+                })
+            }
+
+            conn.query('UPDATE entrada SET idProduto = ?, qtdProduto = ?, idFornecedor = ?, dataEntrada = ? WHERE idEntrada = ?', [req.body.idProduto, req.body.qtdProduto, req.body.idFornecedor, req.body.dataEntrada, req.params.idEntrada], (error, result1, fields) => {
+                if(error){
+                    return res.status(500).send({
+                        error: error
+                    })
+                }
+
+                const response = {
+                    mensagem: "Atualização feita com sucesso",
+                    idEntrada: req.params.idEntrada,
+                    idProduto: req.body.idProduto,
+                    qtdProduto: req.body.qtdProduto,
+                    dataEntrada: req.body.dataEntrada,
+                    request: {
+                        tipo: 'GET',
+                        descricao: 'Retorna todas as entradas',
+                        url: 'http://localhost:3300/entradas/'
+                    }
+                }
+
+                return res.status(202).send({response})
+            })
+        })
+    })
+}

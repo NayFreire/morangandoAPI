@@ -8,6 +8,8 @@ const rotasFornecedores = require('./routes/fornecedores')
 const rotasClientes = require('./routes/clientes')
 const rotasProdutos = require('./routes/produtos')
 const rotasProdutosDeFornecedores = require('./routes/fornecedoresProdutos')
+const rotasEntradas = require('./routes/entradas')
+const rotasSaidas = require('./routes/saidas')
 
 app.use(morgan('dev'))
 app.use(bodyParser.urlencoded({extended: false}))
@@ -32,6 +34,8 @@ app.use('/fornecedores', rotasFornecedores)
 app.use('/clientes', rotasClientes)
 app.use('/produtos', rotasProdutos)
 app.use('/produtosDeFornecedores', rotasProdutosDeFornecedores)
+app.use('/entradas', rotasEntradas)
+// app.use('/saidas', rotasSaidas)
 
 //QUANDO NENHUMA ROTA É ENCONTRADA, ENTRA AQUI
 app.use((req, res, next) => {

@@ -69,7 +69,7 @@ exports.getEntrada = (req, res, next) => {
                     ON entrada.idFornecedor = colabs.idColab 
                     INNER JOIN produto 
                     ON entrada.idProduto = produto.idProduto 
-                    WHERE idEntrada = 1`, [req.params.idEntrada], (error, result, fields) => {
+                    WHERE idEntrada = ?`, [req.params.idEntrada], (error, result, fields) => {
             conn.release()
             if(error){
                 return res.status(500).send({

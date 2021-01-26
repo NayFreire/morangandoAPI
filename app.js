@@ -35,7 +35,7 @@ app.use('/clientes', rotasClientes)
 app.use('/produtos', rotasProdutos)
 app.use('/produtosDeFornecedores', rotasProdutosDeFornecedores)
 app.use('/entradas', rotasEntradas)
-// app.use('/saidas', rotasSaidas)
+app.use('/saidas', rotasSaidas)
 
 //QUANDO NENHUMA ROTA É ENCONTRADA, ENTRA AQUI
 app.use((req, res, next) => {

@@ -6,7 +6,7 @@ const produtoController = require('../controller/produto-controller')
 router.get('/', produtoController.getProdutos)
 router.get('/:idProduto', produtoController.getProduto)
 router.post('/', produtoController.postProdutos)
-router.patch('/', produtoController.updateProduto)
-router.delete('/', produtoController.deleteProduto)
+router.patch('/', login.verificacaoAdm, produtoController.updateProduto)
+router.delete('/', login.verificacaoAdm, produtoController.deleteProduto)
 
 module.exports = router

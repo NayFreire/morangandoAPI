@@ -11,8 +11,8 @@ exports.postFuncionario = (req, res, next) => {
         }
 
         conn.query('SELECT * FROM funcionarios WHERE username = ?', [req.body.username], (error, result) => {
-            console.log(result)
-            console.log(error)
+            // console.log(result)
+            // console.log(error)
             if(error){
                 return res.status(500).send({
                     error: error
@@ -87,9 +87,9 @@ exports.loginFuncionario = (req, res, next) => {
                         mensagem: "Falha na autenticação: erro"
                     })
                 }
-                console.log(resultBusca)
-                console.log(result)
-                console.log(req.body.senha)
+                // console.log(resultBusca)
+                // console.log(result)
+                // console.log(req.body.senha)
                 if(result){
                     const token = jwt.sign({
                         idFuncionario: resultBusca[0].idFuncionarios,
@@ -101,6 +101,7 @@ exports.loginFuncionario = (req, res, next) => {
                     })
                     return res.status(200).send({
                         mensagem: "Autenticado com sucesso",
+                        username: resultBusca[0].username,
                         token: token
                     })
                 }

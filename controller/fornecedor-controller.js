@@ -79,11 +79,22 @@ exports.getFornecedor = (req, res, next) => {
 
             if(result.length == 0){
                 return res.status(404).send({
-                    mensagem: "Não foi encontrado produto com esse ID"
+                    mensagem: "Não foi encontrado fornecedor com esse ID"
                 })
             }
             else{
-                conn.query('SELECT * FROM fornecedor_tem_produto WHERE colabFId = ?', [req.params.idColab], (error, result1, fields) => {
+                conn.query(`SELECT colabs.idColab, 
+                            produto.idProduto, 
+                            produto.nome, 
+                            produto.tipo 
+                            FROM colabs 
+                            INNER JOIN fornecedor 
+                            ON colabs.idColab = fornecedor.colabFornecedorId 
+                            INNER JOIN fornecedor_tem_produto 
+                            ON fornecedor_tem_produto.colabFId = fornecedor.colabFornecedorId 
+                            INNER JOIN produto 
+                            ON fornecedor_tem_produto.produtoId = produto.idProduto 
+                            WHERE colabs.idColab = ?`, [req.body.idColab], (error, result1, fields) => {
                     console.log('param: ' + req.param.idColab)
                     conn.release()
                     if(error){
@@ -112,63 +123,26 @@ exports.getFornecedor = (req, res, next) => {
                         })
                     }
                     else{
-                        for(let i=0;i<result1.length;i++){
-                            conn.query('SELECT * FROM produto WHERE idProduto = ?', [result1[i].produtoId], (error, result2, fields) => {
-                            if(error){
-                                return res.status(500).send({
-                                    error: error
-                                })
-                            }
-
-                            if(result2.length == 0){
-                                const response = {
-                                    idColab: result[0].idColab,
-                                    nome: result[0].nome,
-                                    cidade: result[0].cidade,
-                                    bairro: result[0].bairro,
-                                    email: result[0].email,
-                                    telefone: result[0].telefone,
-                                    cpf: result[0].cpf,
-                                    produtos: {
-                                        mensagem: result[0].nome + " não possui produtos cadastrados"
-                                    }                         
+                        const response = {
+                            idColab: result[0].idColab,
+                            nome: result[0].nome,
+                            cidade: result[0].cidade,
+                            bairro: result[0].bairro,
+                            email: result[0].email,
+                            telefone: result[0].telefone,
+                            cpf: result[0].cpf,
+                            quantidadeProdutos: result1.length,
+                            produtos: result1.map(prod => {
+                                return{
+                                    idProduto: prod.idProduto,
+                                    nome: prod.nome,
+                                    tipo: prod.tipo
                                 }
-                                return res.status(404).send({
-                                    response
-                                })
-                            }
-                            else{
-                                // console.log(result2)
-                                const response = {
-                                    idColab: result[0].idColab,
-                                    nome: result[0].nome,
-                                    cidade: result[0].cidade,
-                                    bairro: result[0].bairro,
-                                    email: result[0].email,
-                                    telefone: result[0].telefone,
-                                    cpf: result[0].cpf,
-                                    pordutos: result2.map(prod => {
-                                        return{
-                                            idProduto: prod.idProduto,
-                                            nome: prod.nome,
-                                            tipo: prod.tipo,
-                                            quantidadeEstoque: prod.qtdEstoque,
-                                            request: {
-                                                tipo: 'GET',
-                                                descricao: 'Retorna todos os fornecedores',
-                                                url: 'http://localhost:3300/fornecedores/' + req.params.idColab
-                                            }
-                                        }
-                                    })                          
-                                }
-                    
-                                return res.status(200).send({response})
-                            }
-                        })
+                            })                      
                         }
-                        
-
-                        
+                        return res.status(200).send({
+                            response
+                        })                                      
                     }
                 })
             }

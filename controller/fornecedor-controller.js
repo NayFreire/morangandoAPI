@@ -70,7 +70,7 @@ exports.getFornecedor = (req, res, next) => {
                     FROM colabs INNER JOIN fornecedor 
                     ON idColab = colabFornecedorId
                     AND idColab = ?`, [req.params.idColab], (error, result, fields) => {
-            conn.release()
+            // conn.release()
             if(error){
                 return res.status(500).send({
                     error: error
@@ -82,28 +82,98 @@ exports.getFornecedor = (req, res, next) => {
                     mensagem: "Não foi encontrado produto com esse ID"
                 })
             }
+            else{
+                conn.query('SELECT * FROM fornecedor_tem_produto WHERE colabFId = ?', [req.params.idColab], (error, result1, fields) => {
+                    console.log('param: ' + req.param.idColab)
+                    conn.release()
+                    if(error){
+                        return res.status(500).send({
+                            error: error
+                        })
+                    }
 
-            const response = {
-                quantidadeRegistros: result.length,
-                fornecedores: result.map(fornecedor => {
-                    return{
-                        idColab: fornecedor.idColab,
-                        nome: fornecedor.nome,
-                        cidade: fornecedor.cidade,
-                        bairro: fornecedor.bairro,
-                        email: fornecedor.email,
-                        telefone: fornecedor.telefone,
-                        cpf: fornecedor.cpf,
-                        request: {
-                            tipo: 'GET',
-                            descricao: 'Retorna todos os fornecedores',
-                            url: 'http://localhost:3300/fornecedores/' + fornecedor.idColab
+                    console.log(result1)
+
+                    if(result1.length == 0){
+                        const response = {
+                            idColab: result[0].idColab,
+                            nome: result[0].nome,
+                            cidade: result[0].cidade,
+                            bairro: result[0].bairro,
+                            email: result[0].email,
+                            telefone: result[0].telefone,
+                            cpf: result[0].cpf,
+                            produtos: {
+                                mensagem: result[0].nome + " não possui produtos cadastrados"
+                            }                         
                         }
+                        return res.status(404).send({
+                            response
+                        })
+                    }
+                    else{
+                        for(let i=0;i<result1.length;i++){
+                            conn.query('SELECT * FROM produto WHERE idProduto = ?', [result1[i].produtoId], (error, result2, fields) => {
+                            if(error){
+                                return res.status(500).send({
+                                    error: error
+                                })
+                            }
+
+                            if(result2.length == 0){
+                                const response = {
+                                    idColab: result[0].idColab,
+                                    nome: result[0].nome,
+                                    cidade: result[0].cidade,
+                                    bairro: result[0].bairro,
+                                    email: result[0].email,
+                                    telefone: result[0].telefone,
+                                    cpf: result[0].cpf,
+                                    produtos: {
+                                        mensagem: result[0].nome + " não possui produtos cadastrados"
+                                    }                         
+                                }
+                                return res.status(404).send({
+                                    response
+                                })
+                            }
+                            else{
+                                // console.log(result2)
+                                const response = {
+                                    idColab: result[0].idColab,
+                                    nome: result[0].nome,
+                                    cidade: result[0].cidade,
+                                    bairro: result[0].bairro,
+                                    email: result[0].email,
+                                    telefone: result[0].telefone,
+                                    cpf: result[0].cpf,
+                                    pordutos: result2.map(prod => {
+                                        return{
+                                            idProduto: prod.idProduto,
+                                            nome: prod.nome,
+                                            tipo: prod.tipo,
+                                            quantidadeEstoque: prod.qtdEstoque,
+                                            request: {
+                                                tipo: 'GET',
+                                                descricao: 'Retorna todos os fornecedores',
+                                                url: 'http://localhost:3300/fornecedores/' + req.params.idColab
+                                            }
+                                        }
+                                    })                          
+                                }
+                    
+                                return res.status(200).send({response})
+                            }
+                        })
+                        }
+                        
+
+                        
                     }
                 })
             }
 
-            return res.status(200).send({response})
+            
         })
     })
 }

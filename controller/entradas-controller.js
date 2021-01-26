@@ -8,7 +8,19 @@ exports.getEntradas = (req, res, next) => {
             })
         }
 
-        conn.query('SELECT * FROM entrada', (error, result, fields) => {
+        conn.query(`SELECT 
+        entrada.idEntrada, 
+        entrada.qtdProduto, 
+        entrada.dataEntrada, 
+        colabs.idColab,
+        colabs.nome, 
+        produto.idProduto,
+        produto.nome AS nomeProduto, 
+        produto.tipo 
+        FROM entrada INNER JOIN colabs 
+        ON entrada.idFornecedor = colabs.idColab 
+        INNER JOIN produto 
+        ON entrada.idProduto = produto.idProduto`, (error, result, fields) => {
             conn.release()
             if(error){
                 return res.status(500).send({
@@ -27,9 +39,16 @@ exports.getEntradas = (req, res, next) => {
                     entradas : result.map(entrada => {
                         return{
                             idEntrada: entrada.idEntrada,
-                            idProduto: entrada.idProduto,
                             quantidadeProduto: entrada.qtdProduto,
-                            idFornecedor: entrada.idFornecedor,
+                            fornecedor: {
+                                idFornecedor: entrada.idColab,
+                                nome: entrada.nome
+                            },
+                            produto: {                         
+                                idProduto: entrada.idProduto,
+                                nome: entrada.nomeProduto,
+                                tipo: entrada.tipo
+                            },
                             dataEntrada: entrada.dataEntrada,
                             request: {
                                 tipo: 'GET',

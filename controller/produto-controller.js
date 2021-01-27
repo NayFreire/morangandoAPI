@@ -63,14 +63,14 @@ exports.getProduto = (req, res, next) => {
 
             const response = {
                 produto: {
-                    idProduto: result[0].idProduto,
+                    idProduto: result[0].idproduto,
                     nome: result[0].nome,
                     tipo: result[0].tipo,
                     quantidadeEstoque: result[0].qtdEstoque,
                     request: {
                         tipo: 'GET',
                         descricao: 'Retorna um produto com específico',
-                        url: 'http://localhost:3300/produtos/' + result[0].idProduto
+                        url: 'http://localhost:3300/produtos/' + result[0].idproduto
                     }
                 }
             }
@@ -143,7 +143,7 @@ exports.updateProduto = (req, res, next) => {
             const response = {
                 mensagem: 'Produto alterado com sucesso',
                 produtoAlterado: {
-                    idProduto: req.body.idProduto,
+                    idProduto: req.body.idproduto,
                     nome: req.body.nome,
                     tipo: req.body.tipo,
                     quantidadeEstoque: req.body.qtdEstoque,

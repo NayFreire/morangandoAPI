@@ -4,7 +4,7 @@
         "MYSQL_PASSWORD": "",
         "MYSQL_DATABASE": "morangando",
         "MYSQL_HOST": "localhost",
-        "MYSQL_PORT": 3308,
+        "MYSQL_PORT": 3306,
         "JWT_KEY": "morangando1234566"
     }
 }

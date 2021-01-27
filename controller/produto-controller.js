@@ -18,6 +18,7 @@ exports.getProdutos = (req, res, next) => {
             const response = {
                 quantidade: result.length,
                 produtos: result.map(prod => {
+                    console.log(result)
                     return{
                         idProduto: prod.idProduto,
                         nome: prod.nome,
@@ -26,7 +27,7 @@ exports.getProdutos = (req, res, next) => {
                         request: {
                             tipo: 'GET',
                             descricao: 'Retorna todos os produtos',
-                            url: 'http://localhost:3300/produtos/' + prod.idProduto 
+                            url: 'http://localhost:3300/produtos/' 
                         }
                     }
                 })

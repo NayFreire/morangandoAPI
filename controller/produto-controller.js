@@ -20,7 +20,7 @@ exports.getProdutos = (req, res, next) => {
                 produtos: result.map(prod => {
                     console.log(result)
                     return{
-                        idProduto: prod.idProduto,
+                        idProduto: prod.idproduto,
                         nome: prod.nome,
                         tipo: prod.tipo,
                         quantidadeEstoque: prod.qtdEstoque,

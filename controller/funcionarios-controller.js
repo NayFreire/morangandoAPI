@@ -11,7 +11,7 @@ exports.postFuncionario = (req, res, next) => {
         }
 
         conn.query('SELECT * FROM funcionarios WHERE username = ?', [req.body.username], (error, result) => {
-            // console.log(result)
+            console.log(result)
             // console.log(error)
             if(error){
                 return res.status(500).send({

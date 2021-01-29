@@ -13,7 +13,8 @@ exports.getPodutosDeFornecedores = (req, res, next) => {
             ON produto.idproduto = fornecedor_tem_produto.produtoId
             JOIN colabs
             ON colabs.idColab = fornecedor_tem_produto.colabFId
-            WHERE produto.nome like "%${req.body.nomeProduto}%"`, (error, result0, fields) => {
+            WHERE produto.nome like "%` + req.body.nomeProduto + `%"`, (error, result0, fields) => {
+                conn.release()
                 if(error){
                     return res.status(500).send({
                         error: error,
@@ -56,6 +57,7 @@ exports.getPodutosDeFornecedores = (req, res, next) => {
             JOIN fornecedor_tem_produto
             ON colabs.idColab = fornecedor_tem_produto.colabFId 
             WHERE nome like "%${req.body.nomeProduto}%"`, (error, result2, fields => {
+                conn.release()
                 if(error){
                     return res.status(500).send({
                         error: error,

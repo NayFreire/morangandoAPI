@@ -8,35 +8,117 @@ exports.getPodutosDeFornecedores = (req, res, next) => {
             })
         }
 
-        conn.query('SELECT * FROM produto WHERE nome  like "%' + req.body.nomeProduto + '%"', (error, result, fields) => {
-            if(error){
-                return res.status(500).send({
-                    error: error,
-                    response: null
-                })
-            }
-
-            if(result.length == 0){
-                return res.status(404).send({
-                    mensagem: "Não foi encontrado produto com esse nome",
-                    response: null
-                })
-            }
-            else{
-                const response = {
-                    produtos: result.map(produto => {
-                        return{
-                            idProduto: produto.idProduto,
-                            nome: produto.nome,
-                            tipo: produto.tipo,
-                            quantidade: produto.qtdEstoque
-                        }
+        if(req.body.nomeProduto){
+            conn.query(`SELECT * FROM produto JOIN fornecedor_tem_produto 
+            ON produto.idproduto = fornecedor_tem_produto.produtoId
+            JOIN colabs
+            ON colabs.idColab = fornecedor_tem_produto.colabFId
+            WHERE produto.nome like "%${req.body.nomeProduto}%"`, (error, result0, fields) => {
+                if(error){
+                    return res.status(500).send({
+                        error: error,
+                        response: null
                     })
                 }
-                return res.status(200).send({response})
+    
+                if(result.length == 0){
+                    return res.status(404).send({
+                        mensagem: "Não foi encontrado produto com esse nome",
+                        response: null
+                    })
+                }
+                else{
+                    const response = {
+                        produtos: {
+                            idProduto: result0[0].idProduto,
+                            nome: result0[0].nomeProduto,
+                            tipo: result0[0].tipo,
+                            quantidade: result0[0].qtdEstoque,
+                            fornecedores: result0.map(fornecedor =>{
+                                return{
+                                    idFornecedor: fornecedor.idColab,
+                                    nome: fornecedor.nome,
+                                    cidade: fornecedor.cidade,
+                                    bairro: fornecedor.bairro,
+                                    telefone: fornecedor.telefone
+                                }
+                            })
+                        }
+                    }
+                    return res.status(200).send({response})
+    
+                }
+            })
+        }
+        else if(req.body.nomeFornecedor){
+            conn.query(`SELECT * FROM colabs JOIN fornecedor 
+            ON colabs.idColab = fornecedor.colabFornecedorId
+            JOIN fornecedor_tem_produto
+            ON colabs.idColab = fornecedor_tem_produto.colabFId 
+            WHERE nome like "%${req.body.nomeProduto}%"`, (error, result2, fields => {
+                if(error){
+                    return res.status(500).send({
+                        error: error,
+                        response: null
+                    })
+                }
 
-            }
-        })
+                if(result0.length == 0){
+                    return res.status(404).send({
+                        mensagem: "Não foi encontrado fornecedor com esse nome",
+                        response: null
+                    })
+                }
+                
+                const response = {
+                    fornecedor:{
+                        idFornecedor: result0[0].idColab,
+                        nome: result0[0].nome,
+                        cidade: result0[0].cidade,
+                        bairro: result0[0].bairro,
+                        email: result0[0].email,
+                        cpf: result0[0].cpf
+                    }
+                }
+
+                return res.status(200).send({response})
+            }))
+        }
+        // else if(req.body.nomeProduto && req.body.nomeFornecedor){
+        //     conn.query(`SELECT 
+        //                 produto.idproduto, produto.nome AS nomeProduto, produto.tipo,
+        //                 colabs.nome, colabs.cidade, colabs.bairro, colabs.telefone 
+        //                 FROM produto JOIN fornecedor_tem_produto 
+        //                 ON produto.idproduto = fornecedor_tem_produto.produtoId
+        //                 JOIN colabs
+        //                 ON colabs.idColab = fornecedor_tem_produto.colabFId
+        //                 WHERE produto.nome LIKE '%${req.body.nomeProduto}%' 
+        //                 AND colabs.nome LIKE '%${req.body.nomeFornecedor}%'`, (error, results2, fields) => {
+        //                     if(error){
+        //                         return res.status(500).send({
+        //                             error: error,
+        //                             response: null
+        //                         })
+        //                     }
+
+        //                     if(results2.length == 0){
+        //                         return res.status(404).send({
+        //                             mensagem: "Não foi encontrado fornecedor ou produto com esse nome",
+        //                             response: null
+        //                         })
+        //                     }
+
+        //                     const response = {
+        //                         produtosFornecedores: results2.map( pf => {
+        //                             return{
+        //                                 idColab: 
+        //                             }
+        //                         }
+        //                         )
+        //                     }
+        //                 }
+        //     )
+        // }
     })
 }
 

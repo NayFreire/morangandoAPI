@@ -65,7 +65,7 @@ exports.getPodutosDeFornecedores = (req, res, next) => {
                     })
                 }
 
-                if(result0.length == 0){
+                if(result2.length == 0){
                     return res.status(404).send({
                         mensagem: "Não foi encontrado fornecedor com esse nome",
                         response: null
@@ -74,12 +74,12 @@ exports.getPodutosDeFornecedores = (req, res, next) => {
                 
                 const response = {
                     fornecedor:{
-                        idFornecedor: result0[0].idColab,
-                        nome: result0[0].nome,
-                        cidade: result0[0].cidade,
-                        bairro: result0[0].bairro,
-                        email: result0[0].email,
-                        cpf: result0[0].cpf
+                        idFornecedor: result2[0].idColab,
+                        nome: result2[0].nome,
+                        cidade: result2[0].cidade,
+                        bairro: result2[0].bairro,
+                        email: result2[0].email,
+                        cpf: result2[0].cpf
                     }
                 }
 

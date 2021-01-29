@@ -11,8 +11,6 @@ exports.postFuncionario = (req, res, next) => {
         }
 
         conn.query('SELECT * FROM funcionarios WHERE username = ?', [req.body.username], (error, result, fields) => {
-            console.log(result)
-            console.log('error: ' + error)
             if(error){
                 return res.status(500).send({
                     error: error
@@ -29,7 +27,6 @@ exports.postFuncionario = (req, res, next) => {
                 console.log('chegou no else')
                 bcrypt.hash(req.body.senha, 10, (errBcrypt, hash) => {
                     if(errBcrypt){
-                        console.log('chegou no if do bcrypt')
                         return res.status(500).send({
                             error: errBcrypt
                         })
@@ -40,7 +37,6 @@ exports.postFuncionario = (req, res, next) => {
                         conn.release()
 
                         if(error){
-                            console.log('chegou no if error do insert')
                             return res.status(500).send({
                                 error: error
                             })

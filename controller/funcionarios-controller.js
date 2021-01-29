@@ -1,5 +1,5 @@
 const mysql = require('../mysql').pool;
-const bcrypt = require('bcrypt-nodejs')
+const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 
 exports.postFuncionario = (req, res, next) => {
@@ -27,29 +27,36 @@ exports.postFuncionario = (req, res, next) => {
             }
             else{
                 console.log('chegou no else')
-                let hash = bcrypt.hash(req.body.senha, 10)
-
-                conn.query('INSERT INTO funcionarios (username, senha, status) VALUES (?, ?, ?)', [req.body.username, hash, req.body.status], (error, result) => {
-                    console.log('chegou no insert')
-                    conn.release()
-
-                    if(error){
-                        console.log('chegou no if error do insert')
+                bcrypt.hash(req.body.senha, 10, (errBcrypt, hash) => {
+                    if(errBcrypt){
+                        console.log('chegou no if do bcrypt')
                         return res.status(500).send({
-                            error: error
+                            error: errBcrypt
                         })
                     }
 
-                    const response = {
-                        mensagem: "Funcionário cadastrado com sucesso",
-                        funcionario: {
-                            idFuncionario: result.insertId,
-                            username: req.body.username,
-                            status: req.body.status
-                        }
-                    }
+                    conn.query('INSERT INTO funcionarios (username, senha, status) VALUES (?, ?, ?)', [req.body.username, hash, req.body.status], (error, result) => {
+                        console.log('chegou no insert')
+                        conn.release()
 
-                    return res.status(201).send(response)
+                        if(error){
+                            console.log('chegou no if error do insert')
+                            return res.status(500).send({
+                                error: error
+                            })
+                        }
+
+                        const response = {
+                            mensagem: "Funcionário cadastrado com sucesso",
+                            funcionario: {
+                                idFuncionario: result.insertId,
+                                username: req.body.username,
+                                status: req.body.status
+                            }
+                        }
+
+                        return res.status(201).send(response)
+                    })
                 })
             }
         })

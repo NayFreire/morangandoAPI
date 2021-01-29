@@ -17,6 +17,7 @@
     "mysql": "^2.18.1"
   },
   "devDependencies": {
+    "bcrypt": "^5.0.0",
     "nodemon": "^2.0.7"
   }
 }

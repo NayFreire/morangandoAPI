@@ -269,7 +269,7 @@ exports.deleteFornecedor = (req, res, next) => {
                 })
             }
             else{
-                conn.query('DELETE FROM colabs WHERE idColab = ?', [req.body.idColab], (error, result1, fields) => {
+                conn.query('DELETE FROM fornecedor WHERE colabFornecedorId = ?', [req.body.idColab], (error, result1, fields) => {
                     if(error){
                         return res.status(500).send({
                             error: error,
@@ -277,7 +277,7 @@ exports.deleteFornecedor = (req, res, next) => {
                         })
                     }
         
-                    conn.query('DELETE FROM fornecedor WHERE colabFornecedorId = ?', [req.body.idColab], (error, result2, fields) => {
+                    conn.query('DELETE FROM colabs WHERE idColab = ?', [req.body.idColab], (error, result2, fields) => {
                         conn.release();
         
                         if(error){

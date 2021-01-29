@@ -29,15 +29,18 @@ exports.postFuncionario = (req, res, next) => {
                 console.log('chegou no else')
                 bcrypt.hash(req.body.senha, 10, (errBcrypt, hash) => {
                     if(errBcrypt){
+                        console.log('chegou no if do bcrypt')
                         return res.status(500).send({
                             error: errBcrypt
                         })
                     }
 
                     conn.query('INSERT INTO funcionarios (username, senha, status) VALUES (?, ?, ?)', [req.body.username, hash, req.body.status], (error, result) => {
+                        console.log('chegou no insert')
                         conn.release()
 
                         if(error){
+                            console.log('chegou no if error do insert')
                             return res.status(500).send({
                                 error: error
                             })

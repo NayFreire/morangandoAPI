@@ -18,14 +18,15 @@ exports.postFuncionario = (req, res, next) => {
                     error: error
                 })
             }
-            
             if(result.length > 0){
+            console.log('chegou no if 1')
                 
                 return res.status(409).send({
                     mensagem: "Já existe um cadastro de funcionário com esse nome de usuário"
                 })
             }
             else{
+                console.log('chegou no else')
                 bcrypt.hash(req.body.senha, 10, (errBcrypt, hash) => {
                     if(errBcrypt){
                         return res.status(500).send({

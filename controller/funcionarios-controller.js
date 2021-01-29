@@ -10,16 +10,17 @@ exports.postFuncionario = (req, res, next) => {
             })
         }
 
-        conn.query('SELECT * FROM funcionarios WHERE username = ?', [req.body.username], (error, result) => {
+        conn.query('SELECT * FROM funcionarios WHERE username = ?', [req.body.username], (error, result, fields) => {
             console.log(result)
-            // console.log(error)
+            console.log('error: ' + error)
             if(error){
                 return res.status(500).send({
                     error: error
                 })
             }
-
+            
             if(result.length > 0){
+                
                 return res.status(409).send({
                     mensagem: "Já existe um cadastro de funcionário com esse nome de usuário"
                 })

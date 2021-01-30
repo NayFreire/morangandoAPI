@@ -36,16 +36,16 @@ exports.getPodutosDeFornecedores = (req, res, next) => {
                                 produtosFornecedores: resultPF.map( pf => {
                                     return{
                                         fornecedor:{
-                                            idColab: resultPF.idColab,
-                                            nome: resultPF.nome,
-                                            cidade: resultPF.cidade,
-                                            bairro: resultPF.bairro,
-                                            telefone: resultPF.telefone
+                                            idColab: pf.idColab,
+                                            nome: pf.nome,
+                                            cidade: pf.cidade,
+                                            bairro: pf.bairro,
+                                            telefone: pf.telefone
                                         },
                                         produto: {
-                                            idProduto: resultPF.idproduto,
-                                            nome: resultPF.nomeProduto,
-                                            tipo: resultPF.tipo
+                                            idProduto: pf.idproduto,
+                                            nome: pf.nomeProduto,
+                                            tipo: pf.tipo
                                         }
                                     }
                                 }

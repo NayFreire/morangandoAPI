@@ -27,6 +27,7 @@ exports.getPodutosDeFornecedores = (req, res, next) => {
     
                 if(result0.length == 0){
                     conn.query(`SELECT * FROM produto WHERE nome LIKE "%${req.body.nomeProduto}%"`, (error, resultProduto, fields) =>{
+                        conn.release()
                         if(error){
                             return res.status(500).send({
                                 error: error,
@@ -48,7 +49,7 @@ exports.getPodutosDeFornecedores = (req, res, next) => {
                                     nome: produto.nome,
                                     tipo: produto.tipo,
                                     qtdEstoque: produto.qtdEstoque,
-                                    fornecedores: resultProduto.length
+                                    fornecedores: result0.length
                                 }
                             })
                         }
@@ -84,7 +85,7 @@ exports.getPodutosDeFornecedores = (req, res, next) => {
             ON colabs.idColab = fornecedor.colabFornecedorId
             JOIN fornecedor_tem_produto
             ON colabs.idColab = fornecedor_tem_produto.colabFId 
-            WHERE nome like "%${req.body.nomeProduto}%"`, (error, result2, fields => {
+            WHERE nome like "%${req.body.nomeFornecedor}%"`, (error, result2, fields => {
                 conn.release()
                 if(error){
                     return res.status(500).send({

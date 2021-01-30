@@ -26,7 +26,7 @@ exports.getPodutosDeFornecedores = (req, res, next) => {
                 }
     
                 if(result0.length == 0){
-                    conn.query('SELECT * FROM produto WHERE nome LIKE "%' + req.body.nomeProduto + '%"', (error, resultProduto, fields) =>{
+                    conn.query(`SELECT * FROM produto WHERE nome LIKE "%${req.body.nomeProduto}%"`, (error, resultProduto, fields) =>{
                         if(error){
                             return res.status(500).send({
                                 error: error,

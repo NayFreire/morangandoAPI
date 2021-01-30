@@ -166,6 +166,10 @@ exports.getPodutosDeFornecedores = (req, res, next) => {
                 }
             })
         }
+
+        return res.status(400).send({
+            mensagem: "Informações não passadas corretamente"
+        })
     })
 }
 

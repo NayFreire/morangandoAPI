@@ -102,14 +102,17 @@ exports.getPodutosDeFornecedores = (req, res, next) => {
                 }
                 
                 const response = {
-                    fornecedor:{
-                        idFornecedor: resultF[0].idColab,
-                        nome: resultF[0].nome,
-                        cidade: resultF[0].cidade,
-                        bairro: resultF[0].bairro,
-                        email: resultF[0].email,
-                        cpf: resultF[0].cpf
+                    fornecedores: resultF.map( fornecedor => {
+                        return {
+                            idFornecedor: fornecedor.idColab,
+                            nome: fornecedor.nome,
+                            cidade: fornecedor.cidade,
+                            bairro: fornecedor.bairro,
+                            email: fornecedor.email,
+                            cpf: fornecedor.cpf
+                        }
                     }
+                    )
                 }
 
                 return res.status(200).send({response})

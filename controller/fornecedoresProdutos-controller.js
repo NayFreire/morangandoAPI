@@ -9,13 +9,12 @@ exports.getPodutosDeFornecedores = (req, res, next) => {
         }
 
         if(req.body.nomeProduto){
-            console.log('-------------------- nomeProduto: ' + req.body.nomeProduto)
             conn.query(`SELECT * FROM produto JOIN fornecedor_tem_produto 
             ON produto.idproduto = fornecedor_tem_produto.produtoId
             JOIN colabs
             ON colabs.idColab = fornecedor_tem_produto.colabFId
-            WHERE produto.nome like "%` + req.body.nomeProduto + `%"`, (error, result0, fields) => {
-                conn.release()
+            WHERE produto.nome LIKE "%` + req.body.nomeProduto + `%"`, (error, result0, fields) => {
+                // conn.release()
                 if(error){
                     return res.status(500).send({
                         error: error,
@@ -24,6 +23,36 @@ exports.getPodutosDeFornecedores = (req, res, next) => {
                 }
     
                 if(result0.length == 0){
+                    conn.query('SELECT * FROM produto WHERE nome LIKE "%' + req.body.nomeProduto + '%"', (error, resultProduto, fields) =>{
+                        if(error){
+                            return res.status(500).send({
+                                error: error,
+                                response: null
+                            })
+                        }
+
+                        if(resultProduto.length == 0){
+                            return res.status(404).send({
+                                error: 'Não foi encontrado um produto com esse nome',
+                                response: null
+                            })
+                        }
+
+                        const response = {
+                            produtos: resultProduto.map(produto =>{
+                                return{
+                                    idProduto: produto.idProduto,
+                                    nome: fornecedor.nome,
+                                    tipo: fornecedor.tipo,
+                                    qtdEstoque: fornecedor.qtdEstoque,
+                                    fornecedores: resultProduto.length
+                                }
+                            })
+                        }
+
+                        return res.status(200).send(response)
+                    })
+
                     return res.status(404).send({
                         mensagem: "Não foi encontrado produto com esse nome",
                         response: null

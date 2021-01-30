@@ -85,7 +85,7 @@ exports.getPodutosDeFornecedores = (req, res, next) => {
             ON colabs.idColab = fornecedor.colabFornecedorId
             JOIN fornecedor_tem_produto
             ON colabs.idColab = fornecedor_tem_produto.colabFId 
-            WHERE nome like "%${req.body.nomeFornecedor}%"`, (error, result2, fields => {
+            WHERE nome like "%${req.body.nomeFornecedor}%"`, (error, resultF, fields => {
                 conn.release()
                 if(error){
                     return res.status(500).send({
@@ -94,7 +94,7 @@ exports.getPodutosDeFornecedores = (req, res, next) => {
                     })
                 }
 
-                if(result2.length == 0){
+                if(resultF.length == 0){
                     return res.status(404).send({
                         mensagem: "Não foi encontrado fornecedor com esse nome",
                         response: null
@@ -103,12 +103,12 @@ exports.getPodutosDeFornecedores = (req, res, next) => {
                 
                 const response = {
                     fornecedor:{
-                        idFornecedor: result2[0].idColab,
-                        nome: result2[0].nome,
-                        cidade: result2[0].cidade,
-                        bairro: result2[0].bairro,
-                        email: result2[0].email,
-                        cpf: result2[0].cpf
+                        idFornecedor: resultF[0].idColab,
+                        nome: resultF[0].nome,
+                        cidade: resultF[0].cidade,
+                        bairro: resultF[0].bairro,
+                        email: resultF[0].email,
+                        cpf: resultF[0].cpf
                     }
                 }
 

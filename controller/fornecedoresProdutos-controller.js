@@ -8,77 +8,53 @@ exports.getPodutosDeFornecedores = (req, res, next) => {
             })
         }
 
-        if(req.body.nomeProduto){
+        if(req.body.nomeProduto && req.body.nomeFornecedor){
             conn.query(`SELECT 
-                        produto.idproduto, produto.nome as nomeProduto, produto.tipo,
-                        colabs.nome, colabs.cidade, colabs.bairro, colabs.telefone 
+                        produto.idproduto, produto.nome AS nomeProduto, produto.tipo,
+                        colabs.idColab, colabs.nome, colabs.cidade, colabs.bairro, colabs.telefone 
                         FROM produto JOIN fornecedor_tem_produto 
                         ON produto.idproduto = fornecedor_tem_produto.produtoId
                         JOIN colabs
                         ON colabs.idColab = fornecedor_tem_produto.colabFId
-                        WHERE produto.nome LIKE "%` + req.body.nomeProduto + `%"`, (error, result0, fields) => {
-                // conn.release()
-                if(error){
-                    return res.status(500).send({
-                        error: error,
-                        response: null
-                    })
-                }
-    
-                if(result0.length == 0){
-                    conn.query(`SELECT * FROM produto WHERE nome LIKE "%${req.body.nomeProduto}%"`, (error, resultProduto, fields) =>{
-                        conn.release()
-                        if(error){
-                            return res.status(500).send({
-                                error: error,
-                                response: null
-                            })
-                        }
+                        WHERE produto.nome LIKE '%${req.body.nomeProduto}%' 
+                        AND colabs.nome LIKE '%${req.body.nomeFornecedor}%'`, (error, resultPF, fields) => {
+                            if(error){
+                                return res.status(500).send({
+                                    error: error,
+                                    response: null
+                                })
+                            }
 
-                        if(resultProduto.length == 0){
-                            return res.status(404).send({
-                                error: 'Não foi encontrado um produto com esse nome',
-                                response: null
-                            })
-                        }
+                            if(resultPF.length == 0){
+                                return res.status(404).send({
+                                    mensagem: "Não foi encontrado este produto no cadastro deste fornecedor",
+                                    response: null
+                                })
+                            }
 
-                        const response = {
-                            produtos: resultProduto.map(produto =>{
-                                return{
-                                    idProduto: produto.idProduto,
-                                    nome: produto.nome,
-                                    tipo: produto.tipo,
-                                    qtdEstoque: produto.qtdEstoque,
-                                    fornecedores: result0.length
+                            const response = {
+                                produtosFornecedores: resultPF.map( pf => {
+                                    return{
+                                        fornecedor:{
+                                            idColab: resultPF.idColab,
+                                            nome: resultPF.nome,
+                                            cidade: resultPF.cidade,
+                                            bairro: resultPF.bairro,
+                                            telefone: resultPF.telefone
+                                        },
+                                        produto: {
+                                            idProduto: resultPF.idproduto,
+                                            nome: resultPF.nomeProduto,
+                                            tipo: resultPF.tipo
+                                        }
+                                    }
                                 }
-                            })
-                        }
+                                )
+                            }
 
-                        return res.status(200).send(response)
-                    })
-                }
-                else{
-                    const response = {
-                        produtos: {
-                            idProduto: result0[0].idProduto,
-                            nome: result0[0].nomeProduto,
-                            tipo: result0[0].tipo,
-                            quantidade: result0[0].qtdEstoque,
-                            fornecedores: result0.map(fornecedor =>{
-                                return{
-                                    idFornecedor: fornecedor.idColab,
-                                    nome: fornecedor.nome,
-                                    cidade: fornecedor.cidade,
-                                    bairro: fornecedor.bairro,
-                                    telefone: fornecedor.telefone
-                                }
-                            })
+                            return res.status(200).send(response)
                         }
-                    }
-                    return res.status(200).send({response})
-    
-                }
-            })
+            )
         }
         else if(req.body.nomeFornecedor){
             conn.query(`SELECT * FROM colabs JOIN fornecedor 

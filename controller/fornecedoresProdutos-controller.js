@@ -45,9 +45,9 @@ exports.getPodutosDeFornecedores = (req, res, next) => {
                             produtos: resultProduto.map(produto =>{
                                 return{
                                     idProduto: produto.idProduto,
-                                    nome: fornecedor.nome,
-                                    tipo: fornecedor.tipo,
-                                    qtdEstoque: fornecedor.qtdEstoque,
+                                    nome: produto.nome,
+                                    tipo: produto.tipo,
+                                    qtdEstoque: produto.qtdEstoque,
                                     fornecedores: resultProduto.length
                                 }
                             })

@@ -118,41 +118,54 @@ exports.getPodutosDeFornecedores = (req, res, next) => {
                 return res.status(200).send({response})
             })
         }
-        // else if(req.body.nomeProduto && req.body.nomeFornecedor){
-        //     conn.query(`SELECT 
-        //                 produto.idproduto, produto.nome AS nomeProduto, produto.tipo,
-        //                 colabs.nome, colabs.cidade, colabs.bairro, colabs.telefone 
-        //                 FROM produto JOIN fornecedor_tem_produto 
-        //                 ON produto.idproduto = fornecedor_tem_produto.produtoId
-        //                 JOIN colabs
-        //                 ON colabs.idColab = fornecedor_tem_produto.colabFId
-        //                 WHERE produto.nome LIKE '%${req.body.nomeProduto}%' 
-        //                 AND colabs.nome LIKE '%${req.body.nomeFornecedor}%'`, (error, results2, fields) => {
-        //                     if(error){
-        //                         return res.status(500).send({
-        //                             error: error,
-        //                             response: null
-        //                         })
-        //                     }
+        else if(req.body.nomeProduto && req.body.nomeFornecedor){
+            conn.query(`SELECT 
+                        produto.idproduto, produto.nome AS nomeProduto, produto.tipo,
+                        colabs.idColab, colabs.nome, colabs.cidade, colabs.bairro, colabs.telefone 
+                        FROM produto JOIN fornecedor_tem_produto 
+                        ON produto.idproduto = fornecedor_tem_produto.produtoId
+                        JOIN colabs
+                        ON colabs.idColab = fornecedor_tem_produto.colabFId
+                        WHERE produto.nome LIKE '%${req.body.nomeProduto}%' 
+                        AND colabs.nome LIKE '%${req.body.nomeFornecedor}%'`, (error, resultPF, fields) => {
+                            if(error){
+                                return res.status(500).send({
+                                    error: error,
+                                    response: null
+                                })
+                            }
 
-        //                     if(results2.length == 0){
-        //                         return res.status(404).send({
-        //                             mensagem: "Não foi encontrado fornecedor ou produto com esse nome",
-        //                             response: null
-        //                         })
-        //                     }
+                            if(resultPF.length == 0){
+                                return res.status(404).send({
+                                    mensagem: "Não foi encontrado este produto no cadastro deste fornecedor",
+                                    response: null
+                                })
+                            }
 
-        //                     const response = {
-        //                         produtosFornecedores: results2.map( pf => {
-        //                             return{
-        //                                 idColab: 
-        //                             }
-        //                         }
-        //                         )
-        //                     }
-        //                 }
-        //     )
-        // }
+                            const response = {
+                                produtosFornecedores: resultPF.map( pf => {
+                                    return{
+                                        fornecedor:{
+                                            idColab: resultPF.idColab,
+                                            nome: resultPF.nome,
+                                            cidade: resultPF.cidade,
+                                            bairro: resultPF.bairro,
+                                            telefone: resultPF.telefone
+                                        },
+                                        produto: {
+                                            idProduto: resultPF.idproduto,
+                                            nome: resultPF.nomeProduto,
+                                            tipo: resultPF.tipo
+                                        }
+                                    }
+                                }
+                                )
+                            }
+
+                            return res.status(200).send(response)
+                        }
+            )
+        }
     })
 }
 

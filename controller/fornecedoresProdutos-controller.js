@@ -9,11 +9,14 @@ exports.getPodutosDeFornecedores = (req, res, next) => {
         }
 
         if(req.body.nomeProduto){
-            conn.query(`SELECT * FROM produto JOIN fornecedor_tem_produto 
-            ON produto.idproduto = fornecedor_tem_produto.produtoId
-            JOIN colabs
-            ON colabs.idColab = fornecedor_tem_produto.colabFId
-            WHERE produto.nome LIKE "%` + req.body.nomeProduto + `%"`, (error, result0, fields) => {
+            conn.query(`SELECT 
+                        produto.idproduto, produto.nome as nomeProduto, produto.tipo,
+                        colabs.nome, colabs.cidade, colabs.bairro, colabs.telefone 
+                        FROM produto JOIN fornecedor_tem_produto 
+                        ON produto.idproduto = fornecedor_tem_produto.produtoId
+                        JOIN colabs
+                        ON colabs.idColab = fornecedor_tem_produto.colabFId
+                        WHERE produto.nome LIKE "%` + req.body.nomeProduto + `%"`, (error, result0, fields) => {
                 // conn.release()
                 if(error){
                     return res.status(500).send({

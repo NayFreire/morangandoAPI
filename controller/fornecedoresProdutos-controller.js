@@ -55,11 +55,6 @@ exports.getPodutosDeFornecedores = (req, res, next) => {
 
                         return res.status(200).send(response)
                     })
-
-                    return res.status(404).send({
-                        mensagem: "Não foi encontrado produto com esse nome",
-                        response: null
-                    })
                 }
                 else{
                     const response = {

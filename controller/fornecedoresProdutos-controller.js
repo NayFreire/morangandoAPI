@@ -8,6 +8,13 @@ exports.getPodutosDeFornecedores = (req, res, next) => {
             })
         }
 
+        if(!req.body.nomeProduto && !req.body.nomeFornecedor){
+            return res.status.(400).send({
+                mensagem: "Informe o nome do produto e/ou nome do fornecedor",
+                errno: res.status
+            })
+        }
+
         if(req.body.nomeProduto && req.body.nomeFornecedor){
             conn.query(`SELECT 
                         produto.idproduto, produto.nome AS nomeProduto, produto.tipo,

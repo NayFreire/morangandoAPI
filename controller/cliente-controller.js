@@ -41,7 +41,7 @@ exports.getClientes = (req, res, next) => {
                                     request: {
                                         tipo: 'GET',
                                         descricao: 'Retorna todos os fornecedores',
-                                        url: 'http://localhost:3300/clientes/'
+                                        url: 'https://morangandoapi.herokuapp.com/clientes/'
                                     }
                                 }
                             })
@@ -96,7 +96,7 @@ exports.getCliente = (req, res, next) => {
                         request: {
                             tipo: 'GET',
                             descricao: 'Retorna todos os fornecedores',
-                            url: 'http://localhost:3300/clientes/' + result[0].idColab
+                            url: 'https://morangandoapi.herokuapp.com/clientes/' + result[0].idColab
                         }
                 }
             }
@@ -144,7 +144,7 @@ exports.postCliente = (req, res, next) => {
                     request: {
                         tipo: 'GET',
                         descricao: 'Retorna todos os fornecedores',
-                        url: 'http://localhost:3300/clientes/'
+                        url: 'https://morangandoapi.herokuapp.com/clientes/'
                     }
                 }
                 return res.status(201).send({response})
@@ -194,7 +194,7 @@ exports.updateCliente = (req, res, next) => {
                     request: {
                         tipo: 'GET',
                         descricao: 'Retorna os dados de um fornecedor',
-                        url: 'http://localhost:3300/clientes/' + req.body.idColab
+                        url: 'https://morangandoapi.herokuapp.com/clientes/' + req.body.idColab
                     }
                 }
                 return res.status(201).send({response})
@@ -243,7 +243,7 @@ exports.deleteCliente = (req, res, next) => {
                             request: {
                                 tipo: 'GET',
                                 descricao: 'Retorna todos os fornecedores',
-                                url: 'http://localhost:3300/fornecedores/',
+                                url: 'https://morangandoapi.herokuapp.com/fornecedores/',
                                 body: {
                                     nome: 'String',
                                     cidade: 'String',

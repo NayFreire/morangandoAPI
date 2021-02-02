@@ -53,7 +53,7 @@ exports.getEntradas = (req, res, next) => {
                             request: {
                                 tipo: 'GET',
                                 descricao: 'Retorna todas as entradas',
-                                url: 'http://localhost:3300/entradas/'
+                                url: 'https://morangandoapi.herokuapp.com/entradas/'
                             }
                         }
 
@@ -153,7 +153,7 @@ exports.postEntrada = (req, res, next) => {
                     request: {
                         tipo: 'GET',
                         descricao: 'Retorna todas as entradas',
-                        url: 'http://localhost:3300/entradas/'
+                        url: 'https://morangandoapi.herokuapp.com/entradas/'
                     }
                 }
             }
@@ -201,7 +201,7 @@ exports.updateEntrada = (req, res, next) => {
                     request: {
                         tipo: 'GET',
                         descricao: 'Retorna todas as entradas',
-                        url: 'http://localhost:3300/entradas/'
+                        url: 'https://morangandoapi.herokuapp.com/entradas/'
                     }
                 }
 
@@ -247,7 +247,7 @@ exports.deleteEntrada = (req, res, next) => {
                     request: {
                         tipo: 'GET',
                         descricao: "Retorna todas as entradas cadastradas",
-                        url: "http://localhost:3300/entradas"
+                        url: "https://morangandoapi.herokuapp.com/entradas"
                     }
                 }
 

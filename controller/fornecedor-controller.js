@@ -40,7 +40,7 @@ exports.getFornecedores = (req, res, next) => {
                                     request: {
                                         tipo: 'GET',
                                         descricao: 'Retorna todos os fornecedores',
-                                        url: 'http://localhost:3300/fornecedores/'
+                                        url: 'https://morangandoapi.herokuapp.com/fornecedores/'
                                     }
                                 }
                             })
@@ -191,7 +191,7 @@ exports.postFornecedor = (req, res, next) => {
                     request: {
                         tipo: 'GET',
                         descricao: 'Retorna todos os fornecedores',
-                        url: 'http://localhost:3300/fornecedores/'
+                        url: 'https://morangandoapi.herokuapp.com/fornecedores/'
                     }
                 }
                 return res.status(201).send({response})
@@ -242,7 +242,7 @@ exports.patchFornecedor = (req, res, next) => {
                     request: {
                         tipo: 'GET',
                         descricao: 'Retorna os dados de um fornecedor',
-                        url: 'http://localhost:3300/fornecedores/' + req.body.idColab
+                        url: 'https://morangandoapi.herokuapp.com/fornecedores/' + req.body.idColab
                     }
                 }
                 return res.status(201).send({response})
@@ -292,7 +292,7 @@ exports.deleteFornecedor = (req, res, next) => {
                             request: {
                                 tipo: 'GET',
                                 descricao: 'Retorna todos os fornecedores',
-                                url: 'http://localhost:3300/fornecedores/',
+                                url: 'https://morangandoapi.herokuapp.com/fornecedores/',
                                 body: {
                                     nome: 'String',
                                     cidade: 'String',

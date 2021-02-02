@@ -109,6 +109,8 @@ CREATE TABLE IF NOT EXISTS `morangando`.`saida` (
     `qtdCorte` INT(11) NOT NULL,
     `idCliente` INT(11) NOT NULL,
     `dataSaida` DATE NOT NULL,
+    `valorSaida` FLOAT,
+    `dataPagamento` DATE,
     PRIMARY KEY (`idSaida`),
     INDEX `idProduto` (`idProduto` ASC) ,
     INDEX `idCliente` (`idCliente` ASC) )
@@ -116,3 +118,18 @@ ENGINE = MyISAM
 AUTO_INCREMENT = 4
 DEFAULT CHARACTER SET = utf8mb4
 COLLATE = utf8mb4_0900_ai_ci;
+
+-- -----------------------------------------------------
+-- Table `morangando`.`pagFornecedor`
+-- -----------------------------------------------------
+CREATE TABLE pagFornecedor (
+	idPagamento INT NOT NULL auto_increment PRIMARY KEY,
+    idEntrada INT NOT NULL,
+    idFornecedor INT NOT NULL,
+    valor FLOAT NOT NULL,
+    dataPagamento DATE,
+    statusPag VARCHAR(10) NOT NULL,
+    
+	FOREIGN KEY (idEntrada) REFERENCES entrada(idEntrada),
+    FOREIGN KEY (idFornecedor) REFERENCES fornecedor(colabFornecedorId)
+)

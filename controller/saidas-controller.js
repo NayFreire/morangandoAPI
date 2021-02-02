@@ -41,7 +41,7 @@ exports.getSaidas = (req, res, next) => {
                         return{
                             idSaida: saida.idSaida,
                             idProduto: saida.idProduto,
-                            qtdProtudo: saida.qtdProduto,
+                            qtdProduto: saida.qtdProduto,
                             qtdCorte: saida.qtdCorte,
                             cliente: {
                                 idCliente: saida.idColab,
@@ -56,7 +56,7 @@ exports.getSaidas = (req, res, next) => {
                             request: {
                                 tipo: 'GET',
                                 descricao: 'Retorna uma saída específica',
-                                url: 'http://localhost:3300/saidas/' + saida.idSaida
+                                url: 'https://morangandoapi.herokuapp.com/saidas/' + saida.idSaida
                             }
                         }
 
@@ -159,7 +159,7 @@ exports.postSaida = (req, res, next) => {
                     request: {
                         tipo: 'GET',
                         descricao: 'Retorna todas as saidas',
-                        url: 'http://localhost:3300/saidas/'
+                        url: 'https://morangandoapi.herokuapp.com/saidas/'
                     }
                 }
             }
@@ -208,7 +208,7 @@ exports.updateSaida = (req, res, next) => {
                     request: {
                         tipo: 'GET',
                         descricao: 'Retorna todas as saídas',
-                        url: 'http://localhost:3300/saidas/'
+                        url: 'https://morangandoapi.herokuapp.com/saidas/'
                     }
                 }
 
@@ -254,7 +254,7 @@ exports.deleteSaida = (req, res, next) => {
                     request: {
                         tipo: 'GET',
                         descricao: "Retorna todas as saídas cadastradas",
-                        url: "http://localhost:3300/saidas"
+                        url: "https://morangandoapi.herokuapp.com/saidas"
                     }
                 }
 

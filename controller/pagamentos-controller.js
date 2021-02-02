@@ -104,7 +104,7 @@ exports.getPagamento = (req, res, next) => {
                 })
             }
 
-            if(result.length == 0){
+            if(result1.length == 0){
                 return res.status(404).send({
                     mensagem: "Não foi encontrado um pagamento com esse ID"
                 })

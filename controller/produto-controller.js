@@ -27,7 +27,7 @@ exports.getProdutos = (req, res, next) => {
                         request: {
                             tipo: 'GET',
                             descricao: 'Retorna todos os produtos',
-                            url: 'http://localhost:3300/produtos/' + prod.idproduto
+                            url: 'https://morangandoapi.herokuapp.com/produtos/' + prod.idproduto
                         }
                     }
                 })

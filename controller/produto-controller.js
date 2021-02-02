@@ -70,7 +70,7 @@ exports.getProduto = (req, res, next) => {
                     request: {
                         tipo: 'GET',
                         descricao: 'Retorna um produto com específico',
-                        url: 'http://localhost:3300/produtos/' + result[0].idproduto
+                        url: 'https://morangandoapi.herokuapp.com/produtos/' + result[0].idproduto
                     }
                 }
             }
@@ -111,7 +111,7 @@ exports.postProdutos = (req, res, next) => {
                     request: {
                         tipo: 'POST',
                         descricao: 'Insere um novo produto',
-                        url: 'http://localhost:3300/produtos'
+                        url: 'https://morangandoapi.herokuapp.com/produtos'
                     }
                 }
             }
@@ -150,7 +150,7 @@ exports.updateProduto = (req, res, next) => {
                     request: {
                         tipo: 'PATCH',
                         descricao: 'Retorna os dados de um produto alterado',
-                        url: 'http://localhost:3300/produtos' + req.body.idProduto
+                        url: 'https://morangandoapi.herokuapp.com/produtos' + req.body.idProduto
                     }
                 }
             }
@@ -191,7 +191,7 @@ exports.deleteProduto = (req, res, next) => {
                         request: {
                             tipo: 'DELETE',
                             descricao: "Deleta um produto",
-                            url: "http://localhost:3300/produtos",
+                            url: "https://morangandoapi.herokuapp.com/produtos",
                             body: {
                                 nome: 'String',
                                 tipo: 'String',

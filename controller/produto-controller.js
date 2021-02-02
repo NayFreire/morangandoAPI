@@ -27,7 +27,7 @@ exports.getProdutos = (req, res, next) => {
                         request: {
                             tipo: 'GET',
                             descricao: 'Retorna todos os produtos',
-                            url: 'http://localhost:3300/produtos/' 
+                            url: 'http://localhost:3300/produtos/' + prod.idproduto
                         }
                     }
                 })

@@ -48,6 +48,12 @@ exports.getPagamentos = (req, res, next) => {
                             })
                         }
 
+                        if(result4.length == 0){
+                            return res.status(404).send({
+                                mensagem: "Não foi encontrado produto com esse ID"
+                            })
+                        }
+
                         const response = {
                             quantidade: result1.length,
                             pagamentos : result1.map(pag => {

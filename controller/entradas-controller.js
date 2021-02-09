@@ -142,7 +142,7 @@ exports.postEntrada = (req, res, next) => {
                 })
             }
 
-            conn.query('INSERT INTO pagFornecedor (idEntrada, idFornecedor, valor, dataPagamento, statusPag) VALUES (?, ?, ?, ?, ?)', [resultEntrada.insertId, idFornecedor, 0, dataEntrada + 7, 'não pago'], (error, resultPag, fields) => {
+            conn.query('INSERT INTO pagFornecedor (idEntrada, idFornecedor, valor, dataPagamento, statusPag) VALUES (?, ?, ?, ?, ?)', [resultEntrada.insertId, req.body.idFornecedor, 0, req.body.dataEntrada + 7, 'não pago'], (error, resultPag, fields) => {
                 conn.release()
 
                 if(error){

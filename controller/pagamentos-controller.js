@@ -165,7 +165,7 @@ exports.getPagamento = (req, res, next) => {
                                     request: {
                                         tipo: 'GET',
                                         descricao: 'Retorna um pagamento',
-                                        url: 'https://morangandoapi.herokuapp.com/produtos/' + pag.idPagamento
+                                        url: 'https://morangandoapi.herokuapp.com/produtos/' + result1[0].idPagamento
                                     }
                                 }
                             }

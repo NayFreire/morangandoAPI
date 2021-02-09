@@ -201,7 +201,7 @@ exports.updateStatusPagamento = (req, res, next) => {
                 })
             }
 
-            conn.query('UPDATE pagFornecedor SET status = "pago" WHERE idPagamento = ?', [req.body.idPagamento], (error, result, fields) => {
+            conn.query('UPDATE pagFornecedor SET statusPag = "pago" WHERE idPagamento = ?', [req.body.idPagamento], (error, result, fields) => {
                 conn.release()
                 if(error){
                     return res.status(500).send({

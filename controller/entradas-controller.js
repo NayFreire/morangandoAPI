@@ -142,7 +142,7 @@ exports.postEntrada = (req, res, next) => {
                 })
             }
 
-            conn.query('SELECT ADDDATE(? , INTERVAL 7 DAY) AS dataPagamento)', [req.body.dataEntrada], (error, resultDate, fields) => {
+            conn.query('SELECT ADDDATE(? , INTERVAL 7 DAY) AS dataPagamento', [req.body.dataEntrada], (error, resultDate, fields) => {
                 if(error){
                     return res.status(500).send({
                         error: error

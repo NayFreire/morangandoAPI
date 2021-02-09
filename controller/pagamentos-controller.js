@@ -39,7 +39,7 @@ exports.getPagamentos = (req, res, next) => {
                         })
                     }
 
-                    conn.query('SELECT * FROM produto WHERE idproduto = ?', [result1[0].idProduto], (error, result4, fields) => {
+                    conn.query('SELECT * FROM produto WHERE idproduto = ?', [result2[0].idProduto], (error, result4, fields) => {
                         conn.release()
 
                         if(error){

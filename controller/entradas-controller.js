@@ -133,8 +133,8 @@ exports.postEntrada = (req, res, next) => {
             })
         }
 
-        conn.query('INSERT INTO entrada (idProduto, qtdProduto, idFornecedor, dataEntrada) VALUES (?, ?, ?, ?)', [req.body.idProduto, req.body.qtdProduto, req.body.idFornecedor, req.body.dataEntrada], (error, result, fields) => {
-            conn.release()
+        conn.query('INSERT INTO entrada (idProduto, qtdProduto, idFornecedor, dataEntrada) VALUES (?, ?, ?, ?)', [req.body.idProduto, req.body.qtdProduto, req.body.idFornecedor, req.body.dataEntrada], (error, resultEntrada, fields) => {
+            // conn.release()
             if(error){
                 return res.status(500).send({
                     error: error,
@@ -142,23 +142,39 @@ exports.postEntrada = (req, res, next) => {
                 })
             }
 
-            const response = {
-                mensagem: "Entrada cadastrada com sucesso",
-                entradaCriada: {
-                    idEntrada: result.insertId,
-                    idProduto: req.body.idProduto,
-                    qtdProduto: req.body.qtdProduto,
-                    idFornecedor: req.body.idFornecedor,
-                    dataEntrada: req.body.dataEntrada,
-                    request: {
-                        tipo: 'GET',
-                        descricao: 'Retorna todas as entradas',
-                        url: 'https://morangandoapi.herokuapp.com/entradas/'
+            conn.query('INSERT INTO pagFornecedor (idEntrada, idFornecedor, valor, dataPagamento, statusPag) VALUES (?, ?, ?, ?, ?)', [resultEntrada.insertId, idFornecedor, 0, dataEntrada + 7, 'não pago'], (error, resultPag, fields) => {
+                conn.release()
+
+                if(error){
+                    return res.status(500).send({
+                        error: error
+                    })
+                }
+
+                const response = {
+                    mensagem: "Entrada cadastrada com sucesso",
+                    entradaCriada: {
+                        idPagamento: resultPag.insertId,
+                        idEntrada: resultEntrada.insertId,
+                        idProduto: req.body.idProduto,
+                        qtdProduto: req.body.qtdProduto,
+                        idFornecedor: req.body.idFornecedor,
+                        dataEntrada: req.body.dataEntrada,
+                        request: {
+                            tipo: 'GET',
+                            descricao: 'Retorna todas as entradas',
+                            url: 'https://morangandoapi.herokuapp.com/entradas/'
+                        }
+                    },
+                    pagamentoCriado: {
+                        idPagamento: resultPag.insertId,
+                        idEntrada: resultEntrada.insertId,
+                        idFornecedor: req.body.idFornecedor
                     }
                 }
-            }
-
-            return res.status(200).send({response})
+    
+                return res.status(200).send({response})
+            }) 
         })
     })
 }

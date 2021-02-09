@@ -88,6 +88,7 @@ exports.getPagamentos = (req, res, next) => {
     })
 }
 
+//RETORNA UM PAGAMENTO
 exports.getPagamento = (req, res, next) => {
     mysql.getConnection((error, conn) => {
         if(error){
@@ -110,7 +111,7 @@ exports.getPagamento = (req, res, next) => {
                 })
             }
             else{
-                conn.query('SELECT * FROM ENTRADA WHERE idEntrada = ?', [result1[0].idEntrada], (error, result2, fields) => {
+                conn.query('SELECT * FROM entrada WHERE idEntrada = ?', [result1[0].idEntrada], (error, result2, fields) => {
 
                     if(error){
                         return res.status(500).send({
@@ -172,5 +173,4 @@ exports.getPagamento = (req, res, next) => {
         })
     })
 }
-
 

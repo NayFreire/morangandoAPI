@@ -143,7 +143,7 @@ exports.getPagamento = (req, res, next) => {
     
                             const response = {
                                 pagamento: {
-                                    idPagamento: pag.idPagamento,
+                                    idPagamento: result1[0].idPagamento,
                                     entrada: {
                                         idEntrada: result2[0].idEntrada,
                                         fornecedor: {
@@ -159,9 +159,9 @@ exports.getPagamento = (req, res, next) => {
                                         qtdProduto: result2[0].qtdProduto,
                                         dataEntrada: result2[0].dataEntrada
                                     },
-                                    valor: pag.valor,
-                                    dataPagamento: pag.dataPagamento,
-                                    status: pag.statusPag,
+                                    valor: result1[0].valor,
+                                    dataPagamento: result1[0].dataPagamento,
+                                    status: result1[0].statusPag,
                                     request: {
                                         tipo: 'GET',
                                         descricao: 'Retorna um pagamento',

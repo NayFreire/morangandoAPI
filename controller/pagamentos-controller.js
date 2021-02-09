@@ -180,3 +180,36 @@ exports.getPagamento = (req, res, next) => {
     })
 }
 
+exports.updateStatusPagamento = (req, res, next) => {
+    mysql.getConnection((error, conn) => {
+        if(error){
+            return res.status(500).send({
+                error: error
+            })
+        }
+
+        conn.query('SELECT * FROM pagFornecedor WHERE idPagamento = ?', [req.body.idPagamento], (error, result1, fields) => {
+            if(error){
+                return res.status(500).send({
+                    error: error
+                })
+            }
+
+            if(result1.length == 0){
+                return res.status(404).send({
+                    mensagem: "Não foi encontrado registro de pagamento com esse ID"
+                })
+            }
+
+            conn.query('UPDATE pagFornecedor SET status = "pago" WHERE idPagamento = ?', [req.body.idPagamento], (error, result, fields) => {
+                conn.release()
+                if(error){
+                    return res.status(500).send({
+                        error: error
+                    })
+                }
+            })
+        })
+    })
+}
+

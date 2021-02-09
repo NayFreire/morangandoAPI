@@ -208,6 +208,10 @@ exports.updateStatusPagamento = (req, res, next) => {
                         error: error
                     })
                 }
+
+                return res.status(202).send({
+                    mensagem: "Status do pagamento atualizado com sucesso"
+                })
             })
         })
     })

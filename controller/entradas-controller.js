@@ -142,39 +142,47 @@ exports.postEntrada = (req, res, next) => {
                 })
             }
 
-            conn.query('INSERT INTO pagFornecedor (idEntrada, idFornecedor, valor, dataPagamento, statusPag) VALUES (?, ?, ?, ?, ?)', [resultEntrada.insertId, req.body.idFornecedor, 0, req.body.dataEntrada + 7, 'não pago'], (error, resultPag, fields) => {
-                conn.release()
-
+            conn.query('SELECT ADDDATE(? , INTERVAL 7 DAY) AS dataPagamento)', [req.body.dataEntrada], (error, resultDate, fields) => {
                 if(error){
                     return res.status(500).send({
                         error: error
                     })
                 }
 
-                const response = {
-                    mensagem: "Entrada cadastrada com sucesso",
-                    entradaCriada: {
-                        idPagamento: resultPag.insertId,
-                        idEntrada: resultEntrada.insertId,
-                        idProduto: req.body.idProduto,
-                        qtdProduto: req.body.qtdProduto,
-                        idFornecedor: req.body.idFornecedor,
-                        dataEntrada: req.body.dataEntrada,
-                        request: {
-                            tipo: 'GET',
-                            descricao: 'Retorna todas as entradas',
-                            url: 'https://morangandoapi.herokuapp.com/entradas/'
-                        }
-                    },
-                    pagamentoCriado: {
-                        idPagamento: resultPag.insertId,
-                        idEntrada: resultEntrada.insertId,
-                        idFornecedor: req.body.idFornecedor
-                    }
-                }
+                conn.query('INSERT INTO pagFornecedor (idEntrada, idFornecedor, valor, dataPagamento, statusPag) VALUES (?, ?, ?, ?, ?)', [resultEntrada.insertId, req.body.idFornecedor, 0, resultDate[0].dataPagamento, 'não pago'], (error, resultPag, fields) => {
+                    conn.release()
     
-                return res.status(200).send({response})
-            }) 
+                    if(error){
+                        return res.status(500).send({
+                            error: error
+                        })
+                    }
+    
+                    const response = {
+                        mensagem: "Entrada cadastrada com sucesso",
+                        entradaCriada: {
+                            idPagamento: resultPag.insertId,
+                            idEntrada: resultEntrada.insertId,
+                            idProduto: req.body.idProduto,
+                            qtdProduto: req.body.qtdProduto,
+                            idFornecedor: req.body.idFornecedor,
+                            dataEntrada: req.body.dataEntrada,
+                            request: {
+                                tipo: 'GET',
+                                descricao: 'Retorna todas as entradas',
+                                url: 'https://morangandoapi.herokuapp.com/entradas/'
+                            }
+                        },
+                        pagamentoCriado: {
+                            idPagamento: resultPag.insertId,
+                            idEntrada: resultEntrada.insertId,
+                            idFornecedor: req.body.idFornecedor
+                        }
+                    }
+        
+                    return res.status(200).send({response})
+                }) 
+            })
         })
     })
 }

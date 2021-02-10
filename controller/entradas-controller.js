@@ -171,7 +171,8 @@ exports.postEntrada = (req, res, next) => {
                             })
                         }
 
-                        let qtdProdutoEstoque = result[0].qtdEstoque + parseInt(req.body.qtdProduto)
+                        let qtdProdutoEstoque = resultEntrada[0].qtdEstoque + parseInt(req.body.qtdProduto)
+                        console.log('---------------' + qtdProdutoEstoque + '--------------')
 
                         conn.query('UPDATE produto SET qtdEstoque = ? WHERE idproduto = ?', [qtdProdutoEstoque, req.body.idProduto], (error, result, fields) => {
                             conn.release()

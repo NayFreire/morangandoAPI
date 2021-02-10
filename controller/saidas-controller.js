@@ -138,33 +138,63 @@ exports.postSaida = (req, res, next) => {
             })
         }
 
-        conn.query('INSERT INTO saida (idProduto, qtdProduto, qtdCorte, idCliente, dataSaida) VALUES (?, ?, ?, ?, ?)', [req.body.idProduto, req.body.qtdProduto, req.body.qtdCorte, req.body.idCliente, req.body.dataSaida], (error, result, fields) => {
-            conn.release()
+        conn.query('SELECT * FROM produto WHERE idproduto = ? ', [req.body.idProduto], (error, resultProduto, fields) => {
             if(error){
                 return res.status(500).send({
-                    error: error,
-                    response: null
+                    error: error
                 })
             }
 
-            const response = {
-                mensagem: "Saída cadastrada com sucesso",
-                saidaCriada: {
-                    idSaida: result.insertId,
-                    idProduto: req.body.idProduto,
-                    qtdProduto: req.body.qtdProduto,
-                    qtdCorte: req.body.qtdCorte,
-                    idFornecedor: req.body.idFornecedor,
-                    dataSaida: req.body.dataSaida,
-                    request: {
-                        tipo: 'GET',
-                        descricao: 'Retorna todas as saidas',
-                        url: 'https://morangandoapi.herokuapp.com/saidas/'
-                    }
-                }
+            if(resultProduto == 0){
+                return res.status(404).send({
+                    mensagem: "Não foi encontrado produto com esse ID"
+                })
             }
 
-            return res.status(200).send({response})
+            conn.query('INSERT INTO saida (idProduto, qtdProduto, qtdCorte, idCliente, dataSaida) VALUES (?, ?, ?, ?, ?)', [req.body.idProduto, req.body.qtdProduto, req.body.qtdCorte, req.body.idCliente, req.body.dataSaida], (error, result, fields) => {
+                // conn.release()
+                if(error){
+                    return res.status(500).send({
+                        error: error,
+                        response: null
+                    })
+                }
+    
+                let qtdProdutoEstoque = parseInt(resultProduto[0].qtdEstoque) - parseInt(req.body.qtdProduto)
+
+                if(qtdProdutoEstoque < 0){
+                    return res.status(400).send({
+                        mensagem: "A quantidade de produto que você deseja retirar nessa saída é maior do que a quantidade presente no estoque no momento"
+                    })
+                }
+
+                conn.query('UPDATE produto SET qtdEstoque = ? WHERE idproduto = ?', [qtdProdutoEstoque, req.body.idProduto], (error, result, fields) => {
+                    if(error){
+                        return res.status(500).send({
+                            error: error
+                        })
+                    }
+
+                    const response = {
+                        mensagem: "Saída cadastrada com sucesso",
+                        saidaCriada: {
+                            idSaida: result.insertId,
+                            idProduto: req.body.idProduto,
+                            qtdProduto: req.body.qtdProduto,
+                            qtdCorte: req.body.qtdCorte,
+                            idFornecedor: req.body.idFornecedor,
+                            dataSaida: req.body.dataSaida,
+                            request: {
+                                tipo: 'GET',
+                                descricao: 'Retorna todas as saidas',
+                                url: 'https://morangandoapi.herokuapp.com/saidas/'
+                            }
+                        }
+                    }
+        
+                    return res.status(200).send({response})
+                })
+            })
         })
     })
 }

@@ -158,20 +158,20 @@ exports.postEntrada = (req, res, next) => {
                         })
                     }
 
-                    conn.query('SELECT qtdEstoque FROM produto WHERE idproduto = ?', [req.body.idProduto], (error, result, fields) => {
+                    conn.query('SELECT qtdEstoque FROM produto WHERE idproduto = ?', [req.body.idProduto], (error, resultProduto, fields) => {
                         if(error){
                             return res.status(500).send({
                                 error: error
                             })
                         }
 
-                        if(result.length == 0){
+                        if(resultProduto.length == 0){
                             return res.status(404).send({
                                 mensagem: "Não foi encontrado produto com esse ID"
                             })
                         }
 
-                        let qtdProdutoEstoque = resultEntrada[0].qtdEstoque + parseInt(req.body.qtdProduto)
+                        let qtdProdutoEstoque = parseInt(resultProduto[0].qtdEstoque) + parseInt(req.body.qtdProduto)
                         console.log('---------------' + qtdProdutoEstoque + '--------------')
 
                         conn.query('UPDATE produto SET qtdEstoque = ? WHERE idproduto = ?', [qtdProdutoEstoque, req.body.idProduto], (error, result, fields) => {

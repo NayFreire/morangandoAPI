@@ -150,37 +150,65 @@ exports.postEntrada = (req, res, next) => {
                 }
 
                 conn.query('INSERT INTO pagFornecedor (idEntrada, idFornecedor, valor, dataPagamento, statusPag) VALUES (?, ?, ?, ?, ?)', [resultEntrada.insertId, req.body.idFornecedor, 0, resultDate[0].dataPagamento, 'não pago'], (error, resultPag, fields) => {
-                    conn.release()
+                    // conn.release()
     
                     if(error){
                         return res.status(500).send({
                             error: error
                         })
                     }
-    
-                    const response = {
-                        mensagem: "Entrada cadastrada com sucesso",
-                        entradaCriada: {
-                            idPagamento: resultPag.insertId,
-                            idEntrada: resultEntrada.insertId,
-                            idProduto: req.body.idProduto,
-                            qtdProduto: req.body.qtdProduto,
-                            idFornecedor: req.body.idFornecedor,
-                            dataEntrada: req.body.dataEntrada,
-                            request: {
-                                tipo: 'GET',
-                                descricao: 'Retorna todas as entradas',
-                                url: 'https://morangandoapi.herokuapp.com/entradas/'
-                            }
-                        },
-                        pagamentoCriado: {
-                            idPagamento: resultPag.insertId,
-                            idEntrada: resultEntrada.insertId,
-                            idFornecedor: req.body.idFornecedor
+
+                    conn.query('SELECT qtdEstoque FROM produto WHERE idproduto = ?', [req.body.idProduto], (error, result, fields) => {
+                        if(error){
+                            return res.status(500).send({
+                                error: error
+                            })
                         }
-                    }
-        
-                    return res.status(200).send({response})
+
+                        if(result.length == 0){
+                            return res.status(404).send({
+                                mensagem: "Não foi encontrado produto com esse ID"
+                            })
+                        }
+
+                        let qtdProdutoEstoque = result[0].qtdEstoque + parseInt(req.body.qtdProduto)
+
+                        conn.query('UPDATE produto SET qtdEstoque = ? WHERE idproduto = ?', [qtdProdutoEstoque, req.body.idProduto], (error, result, fields) => {
+                            conn.release()
+
+                            if(error){
+                                return res.status(500).send({
+                                    error: error
+                                })
+                            }
+
+                            const response = {
+                                mensagem: "Entrada cadastrada com sucesso",
+                                entradaCriada: {
+                                    idPagamento: resultPag.insertId,
+                                    idEntrada: resultEntrada.insertId,
+                                    idProduto: req.body.idProduto,
+                                    qtdProduto: req.body.qtdProduto,
+                                    idFornecedor: req.body.idFornecedor,
+                                    dataEntrada: req.body.dataEntrada,
+                                    request: {
+                                        tipo: 'GET',
+                                        descricao: 'Retorna todas as entradas',
+                                        url: 'https://morangandoapi.herokuapp.com/entradas/'
+                                    }
+                                },
+                                pagamentoCriado: {
+                                    idPagamento: resultPag.insertId,
+                                    idEntrada: resultEntrada.insertId,
+                                    idFornecedor: req.body.idFornecedor
+                                }
+                            }
+                
+                            return res.status(200).send({response})
+                        })
+                    })
+    
+                    
                 }) 
             })
         })

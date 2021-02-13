@@ -9,18 +9,18 @@ exports.getEntradas = (req, res, next) => {
         }
 
         conn.query(`SELECT 
-        entrada.idEntrada, 
-        entrada.qtdProduto, 
-        entrada.dataEntrada, 
-        colabs.idColab,
-        colabs.nome, 
-        produto.idProduto,
-        produto.nome AS nomeProduto, 
-        produto.tipo 
-        FROM entrada INNER JOIN colabs 
-        ON entrada.idFornecedor = colabs.idColab 
-        INNER JOIN produto 
-        ON entrada.idProduto = produto.idProduto`, (error, result, fields) => {
+                    entrada.idEntrada, 
+                    entrada.qtdProduto, 
+                    DATE_FORMAT(dataEntrada, "%d/%m/%Y") AS dataEntrada,
+                    colabs.idColab, 
+                    colabs.nome, 
+                    produto.idProduto, 
+                    produto.nome AS nomeProduto, 
+                    produto.tipo 
+                    FROM entrada INNER JOIN colabs 
+                    ON entrada.idFornecedor = colabs.idColab 
+                    INNER JOIN produto 
+                    ON entrada.idProduto = produto.idProduto`, (error, result, fields) => {
             conn.release()
             if(error){
                 return res.status(500).send({
@@ -78,16 +78,16 @@ exports.getEntrada = (req, res, next) => {
         conn.query(`SELECT 
                     entrada.idEntrada, 
                     entrada.qtdProduto, 
-                    entrada.dataEntrada, 
-                    colabs.idColab,
+                    DATE_FORMAT(dataEntrada, "%d/%m/%Y") AS dataEntrada,
+                    colabs.idColab, 
                     colabs.nome, 
-                    produto.idProduto,
+                    produto.idProduto, 
                     produto.nome AS nomeProduto, 
                     produto.tipo 
                     FROM entrada INNER JOIN colabs 
                     ON entrada.idFornecedor = colabs.idColab 
                     INNER JOIN produto 
-                    ON entrada.idProduto = produto.idProduto 
+                    ON entrada.idProduto = produto.idProduto
                     WHERE idEntrada = ?`, [req.params.idEntrada], (error, result, fields) => {
             conn.release()
             if(error){

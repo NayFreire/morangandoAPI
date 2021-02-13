@@ -8,20 +8,20 @@ exports.getSaidas = (req, res, next) => {
             })
         }
 
-        conn.query(`SELECT 
-        saida.idSaida, 
-        saida.qtdProduto, 
-        saida.qtdCorte,
-        saida.dataSaida, 
-        colabs.idColab,
-        colabs.nome, 
-        produto.idProduto,
-        produto.nome AS nomeProduto, 
-        produto.tipo 
-        FROM saida INNER JOIN colabs 
-        ON saida.idCliente = colabs.idColab 
-        INNER JOIN produto 
-        ON saida.idProduto = produto.idProduto`, (error, result, fields) => {
+        conn.query(`SELECT  
+                    saida.idSaida, 
+                    saida.qtdProduto, 
+                    saida.qtdCorte,
+                    DATE_FORMAT(saida.dataSaida, '%d/%m/%Y') AS dataSaida, 
+                    colabs.idColab,
+                    colabs.nome, 
+                    produto.idProduto,
+                    produto.nome AS nomeProduto, 
+                    produto.tipo 
+                    FROM saida INNER JOIN colabs 
+                    ON saida.idCliente = colabs.idColab 
+                    INNER JOIN produto 
+                    ON saida.idProduto = produto.idProduto`, (error, result, fields) => {
             conn.release()
             if(error){
                 return res.status(500).send({

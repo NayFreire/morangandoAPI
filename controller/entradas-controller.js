@@ -139,91 +139,102 @@ exports.postEntrada = (req, res, next) => {
         let month = dataHoje.getMonth()
         let year = dataHoje.getFullYear()
 
-        let mysqlDate = year + '-' + (month + 1) + '-' + day
+        let normalDate = day + '/' + (month + 1) + '/' + year
 
         if(!req.body.dataEntrada){
-            req.body.dataEntrada = mysqlDate
+            req.body.dataEntrada = normalDate
         }
-
-        conn.query('INSERT INTO entrada (idProduto, qtdProduto, idFornecedor, dataEntrada) VALUES (?, ?, ?, ?)', [req.body.idProduto, req.body.qtdProduto, req.body.idFornecedor, req.body.dataEntrada], (error, resultEntrada, fields) => {
-            // conn.release()
+        
+        conn.query(`SELECT DATE_FORMAT(STR_TO_DATE(?, '%d/%m/%Y'), '%Y-%m-%d') AS dataEntrada`, [req.body.dataEntrada], (error, resultDate, fields) => {
             if(error){
                 return res.status(500).send({
-                    error: error,
-                    response: null
+                    error: error
                 })
             }
 
-            conn.query('SELECT ADDDATE(? , INTERVAL 7 DAY) AS dataPagamento', [req.body.dataEntrada], (error, resultDate, fields) => {
+            conn.query('INSERT INTO entrada (idProduto, qtdProduto, idFornecedor, dataEntrada) VALUES (?, ?, ?, ?)', [req.body.idProduto, req.body.qtdProduto, req.body.idFornecedor, resultDate[0].dataEntrada], (error, resultEntrada, fields) => {
+                // conn.release()
                 if(error){
                     return res.status(500).send({
-                        error: error
+                        error: error,
+                        response: null
                     })
                 }
-
-                conn.query('INSERT INTO pagFornecedor (idEntrada, idFornecedor, valor, dataPagamento, statusPag) VALUES (?, ?, ?, ?, ?)', [resultEntrada.insertId, req.body.idFornecedor, 0, resultDate[0].dataPagamento, 'não pago'], (error, resultPag, fields) => {
-                    // conn.release()
     
+                conn.query('SELECT ADDDATE(? , INTERVAL 7 DAY) AS dataPagamento', [req.body.dataEntrada], (error, resultDate, fields) => {
                     if(error){
                         return res.status(500).send({
                             error: error
                         })
                     }
-
-                    conn.query('SELECT qtdEstoque FROM produto WHERE idproduto = ?', [req.body.idProduto], (error, resultProduto, fields) => {
+    
+                    conn.query('INSERT INTO pagFornecedor (idEntrada, idFornecedor, valor, dataPagamento, statusPag) VALUES (?, ?, ?, ?, ?)', [resultEntrada.insertId, req.body.idFornecedor, 0, resultDate[0].dataPagamento, 'não pago'], (error, resultPag, fields) => {
+                        // conn.release()
+        
                         if(error){
                             return res.status(500).send({
                                 error: error
                             })
                         }
-
-                        if(resultProduto.length == 0){
-                            return res.status(404).send({
-                                mensagem: "Não foi encontrado produto com esse ID"
-                            })
-                        }
-
-                        let qtdProdutoEstoque = parseInt(resultProduto[0].qtdEstoque) + parseInt(req.body.qtdProduto)
-
-                        conn.query('UPDATE produto SET qtdEstoque = ? WHERE idproduto = ?', [qtdProdutoEstoque, req.body.idProduto], (error, result, fields) => {
-                            conn.release()
-
+    
+                        conn.query('SELECT qtdEstoque FROM produto WHERE idproduto = ?', [req.body.idProduto], (error, resultProduto, fields) => {
                             if(error){
                                 return res.status(500).send({
                                     error: error
                                 })
                             }
-
-                            const response = {
-                                mensagem: "Entrada cadastrada com sucesso",
-                                entradaCriada: {
-                                    idPagamento: resultPag.insertId,
-                                    idEntrada: resultEntrada.insertId,
-                                    idProduto: req.body.idProduto,
-                                    qtdProduto: req.body.qtdProduto,
-                                    idFornecedor: req.body.idFornecedor,
-                                    dataEntrada: req.body.dataEntrada,
-                                    request: {
-                                        tipo: 'GET',
-                                        descricao: 'Retorna todas as entradas',
-                                        url: 'https://morangandoapi.herokuapp.com/entradas/'
-                                    }
-                                },
-                                pagamentoCriado: {
-                                    idPagamento: resultPag.insertId,
-                                    idEntrada: resultEntrada.insertId,
-                                    idFornecedor: req.body.idFornecedor
-                                }
-                            }
-                
-                            return res.status(200).send({response})
-                        })
-                    })
     
+                            if(resultProduto.length == 0){
+                                return res.status(404).send({
+                                    mensagem: "Não foi encontrado produto com esse ID"
+                                })
+                            }
+    
+                            let qtdProdutoEstoque = parseInt(resultProduto[0].qtdEstoque) + parseInt(req.body.qtdProduto)
+    
+                            conn.query('UPDATE produto SET qtdEstoque = ? WHERE idproduto = ?', [qtdProdutoEstoque, req.body.idProduto], (error, result, fields) => {
+                                conn.release()
+    
+                                if(error){
+                                    return res.status(500).send({
+                                        error: error
+                                    })
+                                }
+    
+                                const response = {
+                                    mensagem: "Entrada cadastrada com sucesso",
+                                    entradaCriada: {
+                                        idPagamento: resultPag.insertId,
+                                        idEntrada: resultEntrada.insertId,
+                                        idProduto: req.body.idProduto,
+                                        qtdProduto: req.body.qtdProduto,
+                                        idFornecedor: req.body.idFornecedor,
+                                        dataEntrada: resultDate[0].dataEntrada,
+                                        request: {
+                                            tipo: 'GET',
+                                            descricao: 'Retorna todas as entradas',
+                                            url: 'https://morangandoapi.herokuapp.com/entradas/'
+                                        }
+                                    },
+                                    pagamentoCriado: {
+                                        idPagamento: resultPag.insertId,
+                                        idEntrada: resultEntrada.insertId,
+                                        idFornecedor: req.body.idFornecedor
+                                    }
+                                }
                     
-                }) 
+                                return res.status(200).send({response})
+                            })
+                        })
+        
+                        
+                    }) 
+                })
             })
-        })
+
+        })        
+
+        
     })
 }
 

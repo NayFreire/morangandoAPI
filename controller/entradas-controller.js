@@ -133,7 +133,15 @@ exports.postEntrada = (req, res, next) => {
             })
         }
 
-        conn.query('INSERT INTO entrada (idProduto, qtdProduto, idFornecedor, dataEntrada) VALUES (?, ?, ?, ?)', [req.body.idProduto, req.body.qtdProduto, req.body.idFornecedor, req.body.dataEntrada], (error, resultEntrada, fields) => {
+        let dataHoje = new Date()
+
+        let day = dataHoje.getDate()
+        let month = dataHoje.getMonth()
+        let year = dataHoje.getFullYear()
+
+        let mysqlDate = year + '-' + (month + 1) + '-' + day
+
+        conn.query('INSERT INTO entrada (idProduto, qtdProduto, idFornecedor, dataEntrada) VALUES (?, ?, ?, ?)', [req.body.idProduto, req.body.qtdProduto, req.body.idFornecedor, mysqlDate], (error, resultEntrada, fields) => {
             // conn.release()
             if(error){
                 return res.status(500).send({
@@ -142,7 +150,7 @@ exports.postEntrada = (req, res, next) => {
                 })
             }
 
-            conn.query('SELECT ADDDATE(? , INTERVAL 7 DAY) AS dataPagamento', [req.body.dataEntrada], (error, resultDate, fields) => {
+            conn.query('SELECT ADDDATE(? , INTERVAL 7 DAY) AS dataPagamento', [mysqlDate], (error, resultDate, fields) => {
                 if(error){
                     return res.status(500).send({
                         error: error

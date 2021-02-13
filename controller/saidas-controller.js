@@ -1,4 +1,5 @@
 const mysql = require('../mysql').pool
+const calculoSaida = require('../math/valorSaida')
 
 exports.getSaidas = (req, res, next) => {
     mysql.getConnection((error, conn) => {
@@ -164,50 +165,74 @@ exports.postSaida = (req, res, next) => {
                     })
                 }
 
-                conn.query('INSERT INTO saida (idProduto, qtdProduto, qtdCorte, idCliente, dataSaida) VALUES (?, ?, ?, ?, ?)', [req.body.idProduto, req.body.qtdProduto, req.body.qtdCorte, req.body.idCliente, req.body.dataSaida], (error, result, fields) => {
-                    // conn.release()
+                conn.query(`SELECT DATE_FORMAT(STR_TO_DATE(?, '%d/%m/%Y'), '%Y-%m-%d') AS dataSaida`, [req.body.dataSaida], (error, resultDate, fields) => {
                     if(error){
                         return res.status(500).send({
-                            error: error,
-                            response: null
+                            error: error
                         })
                     }
-        
-                    let qtdProdutoEstoque = parseInt(resultProduto[0].qtdEstoque) - parseInt(req.body.qtdProduto)
-    
-                    if(qtdProdutoEstoque < 0){
-                        return res.status(400).send({
-                            mensagem: "A quantidade de produto que você deseja retirar nessa saída é maior do que a quantidade presente no estoque no momento"
-                        })
-                    }
-    
-                    conn.query('UPDATE produto SET qtdEstoque = ? WHERE idproduto = ?', [qtdProdutoEstoque, req.body.idProduto], (error, result, fields) => {
+
+                    conn.query('INSERT INTO saida (idProduto, qtdProduto, qtdCorte, idCliente, dataSaida, valorProduto) VALUES (?, ?, ?, ?, ?, ?)', [req.body.idProduto, req.body.qtdProduto, req.body.qtdCorte, req.body.idCliente, resultDate[0].dataSaida, req.body.valorProduto], (error, result, fields) => {
+                        // conn.release()
                         if(error){
                             return res.status(500).send({
-                                error: error
+                                error: error,
+                                response: null
+                            })
+                        }
+            
+                        let qtdProdutoEstoque = parseInt(resultProduto[0].qtdEstoque) - parseInt(req.body.qtdProduto)
+        
+                        if(qtdProdutoEstoque < 0){
+                            return res.status(400).send({
+                                mensagem: "A quantidade de produto que você deseja retirar nessa saída é maior do que a quantidade presente no estoque no momento"
                             })
                         }
     
-                        const response = {
-                            mensagem: "Saída cadastrada com sucesso",
-                            saidaCriada: {
-                                idSaida: result.insertId,
-                                idProduto: req.body.idProduto,
-                                qtdProduto: req.body.qtdProduto,
-                                qtdCorte: req.body.qtdCorte,
-                                idFornecedor: req.body.idFornecedor,
-                                dataSaida: req.body.dataSaida,
-                                request: {
-                                    tipo: 'GET',
-                                    descricao: 'Retorna todas as saidas',
-                                    url: 'https://morangandoapi.herokuapp.com/saidas/'
-                                }
+                        //*CÁLCULO DO VALOR DA SAÍDA DE PRODUTO
+    
+                        let valorSaida = calculoSaida.calculaValorSaida(req.body.valorProduto, req.body.qtdProduto, req.body.qtdCorte)
+
+                        console.log('*********' + valorSaida + '*********')
+    
+                        conn.query('UPDATE saida SET valorSaida = ? WHERE idSaida = ?', [valorSaida, result.insertId], (error, resultValorSaida, fields) => {
+                            if(error){
+                                return res.status(500).send({
+                                    error: error
+                                })
                             }
-                        }
+    
+                            conn.query('UPDATE produto SET qtdEstoque = ? WHERE idproduto = ?', [qtdProdutoEstoque, req.body.idProduto], (error, result, fields) => {
+                                if(error){
+                                    return res.status(500).send({
+                                        error: error
+                                    })
+                                }
             
-                        return res.status(200).send({response})
+                                const response = {
+                                    mensagem: "Saída cadastrada com sucesso",
+                                    saidaCriada: {
+                                        idSaida: result.insertId,
+                                        idProduto: req.body.idProduto,
+                                        qtdProduto: req.body.qtdProduto,
+                                        qtdCorte: req.body.qtdCorte,
+                                        idFornecedor: req.body.idFornecedor,
+                                        dataSaida: req.body.dataSaida,
+                                        request: {
+                                            tipo: 'GET',
+                                            descricao: 'Retorna todas as saidas',
+                                            url: 'https://morangandoapi.herokuapp.com/saidas/'
+                                        }
+                                    }
+                                }
+                    
+                                return res.status(200).send({response})
+                            })
+                        })
                     })
                 })
+
+                
             })
         })
     })

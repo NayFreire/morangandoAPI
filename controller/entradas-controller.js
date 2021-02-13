@@ -152,7 +152,7 @@ exports.postEntrada = (req, res, next) => {
                 })
             }
 
-            conn.query('INSERT INTO entrada (idProduto, qtdProduto, idFornecedor, dataEntrada) VALUES (?, ?, ?, ?)', [req.body.idProduto, req.body.qtdProduto, req.body.idFornecedor, resultDate[0].dataEntrada], (error, resultEntrada, fields) => {
+            conn.query('INSERT INTO entrada (idProduto, qtdProduto, idFornecedor, dataEntrada) VALUES (?, ?, ?, ?)', [req.body.idProduto, req.body.qtdProduto, req.body.idFornecedor, resultDateE[0].dataEntrada], (error, resultEntrada, fields) => {
                 // conn.release()
                 if(error){
                     return res.status(500).send({
@@ -209,7 +209,7 @@ exports.postEntrada = (req, res, next) => {
                                         idProduto: req.body.idProduto,
                                         qtdProduto: req.body.qtdProduto,
                                         idFornecedor: req.body.idFornecedor,
-                                        dataEntrada: resultDate[0].dataEntrada,
+                                        dataEntrada: resultDateE[0].dataEntrada,
                                         request: {
                                             tipo: 'GET',
                                             descricao: 'Retorna todas as entradas',

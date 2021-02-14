@@ -13,3 +13,5 @@ let calculaValorSaida = (valorProduto, qtdProduto, qtdCorte) => {
 
     return valor
 }
+
+module.exports = calculaValorSaida

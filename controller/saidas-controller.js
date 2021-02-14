@@ -172,7 +172,7 @@ exports.postSaida = (req, res, next) => {
                         })
                     }
 
-                    conn.query('INSERT INTO saida (idProduto, qtdProduto, qtdCorte, idCliente, dataSaida, valorProduto) VALUES (?, ?, ?, ?, ?, ?)', [req.body.idProduto, req.body.qtdProduto, req.body.qtdCorte, req.body.idCliente, resultDate[0].dataSaida, req.body.valorProduto], (error, result, fields) => {
+                    conn.query('INSERT INTO saida (idProduto, qtdProduto, qtdCorte, idCliente, dataSaida, valorProduto) VALUES (?, ?, ?, ?, ?, ?)', [req.body.idProduto, req.body.qtdProduto, req.body.qtdCorte, req.body.idCliente, resultDate[0].dataSaida, req.body.valorProduto], (error, resultInsert, fields) => {
                         // conn.release()
                         if(error){
                             return res.status(500).send({
@@ -195,7 +195,7 @@ exports.postSaida = (req, res, next) => {
 
                         console.log('*********' + valorSaida + '*********')
     
-                        conn.query('UPDATE saida SET valorSaida = ? WHERE idSaida = ?', [valorSaida, result.insertId], (error, resultValorSaida, fields) => {
+                        conn.query('UPDATE saida SET valorSaida = ? WHERE idSaida = ?', [valorSaida, resultInsert.insertId], (error, resultValorSaida, fields) => {
                             if(error){
                                 return res.status(500).send({
                                     error: error
@@ -212,7 +212,7 @@ exports.postSaida = (req, res, next) => {
                                 const response = {
                                     mensagem: "Saída cadastrada com sucesso",
                                     saidaCriada: {
-                                        idSaida: result.insertId,
+                                        idSaida: resultInsert.insertId,
                                         idProduto: req.body.idProduto,
                                         qtdProduto: req.body.qtdProduto,
                                         qtdCorte: req.body.qtdCorte,

@@ -125,6 +125,66 @@ exports.getEntrada = (req, res, next) => {
     })
 }
 
+exports.getEntradaPorMes = (req, res, next) => {
+    mysql.getConnection((error, conn) => {
+        if(error){
+            return res.status(500).send({
+                error: error
+            })
+        }
+
+        conn.query(`SELECT 
+                    entrada.idEntrada, 
+                    entrada.qtdProduto, 
+                    DATE_FORMAT(dataEntrada, "%d/%m/%Y") AS dataEntrada,
+                    colabs.idColab, colabs.nome, produto.idProduto, produto.nome AS nomeProduto, produto.tipo 
+                    FROM entrada INNER JOIN colabs 
+                    ON entrada.idFornecedor = colabs.idColab 
+                    INNER JOIN produto ON entrada.idProduto = produto.idProduto
+                    WHERE MONTH(dataEntrada) = ?`, [req.params.mes], (error, result, fields) => {
+            if(error){
+                return res.status(500).send({
+                    error: error
+                })
+            }
+
+            if(result.length == 0){
+                return res.status(404).send({
+                    mensagem: "Não foi encontrado registro de entrada nesse mês"
+                })
+            }
+
+            const result = {
+                quantidade: result.length,
+                mes: req.params.mes,
+                registros: result.map(entrada => {
+                    return{
+                        idEntrada: entrada.idEntrada,
+                        quantidadeProduto: entrada.qtdProduto,
+                        fornecedor: {
+                            idFornecedor: entrada.idColab,
+                            nome: entrada.nome
+                        },
+                        produto: {                         
+                            idProduto: entrada.idProduto,
+                            nome: entrada.nomeProduto,
+                            tipo: entrada.tipo
+                        },
+                        dataEntrada: entrada.dataEntrada,
+                        request: {
+                            tipo: 'GET',
+                            descricao: 'Retorna uma entrada',
+                            url: 'https://morangandoapi.herokuapp.com/entradas/' + entrada.idEntrada
+                        }
+                    }
+                })
+            }
+
+            return res.status(200).send({response})
+        })
+    })
+}
+
 exports.postEntrada = (req, res, next) => {
     mysql.getConnection((error, conn) => {
         if(error){
@@ -153,7 +213,6 @@ exports.postEntrada = (req, res, next) => {
             }
 
             conn.query('INSERT INTO entrada (idProduto, qtdProduto, idFornecedor, dataEntrada) VALUES (?, ?, ?, ?)', [req.body.idProduto, req.body.qtdProduto, req.body.idFornecedor, resultDateE[0].dataEntrada], (error, resultEntrada, fields) => {
-                // conn.release()
                 if(error){
                     return res.status(500).send({
                         error: error,
@@ -168,9 +227,7 @@ exports.postEntrada = (req, res, next) => {
                         })
                     }
     
-                    conn.query('INSERT INTO pagFornecedor (idEntrada, idFornecedor, valor, dataPagamento, statusPag) VALUES (?, ?, ?, ?, ?)', [resultEntrada.insertId, req.body.idFornecedor, 0, resultDate[0].dataPagamento, 'não pago'], (error, resultPag, fields) => {
-                        // conn.release()
-        
+                    conn.query('INSERT INTO pagFornecedor (idEntrada, idFornecedor, valor, dataPagamento, statusPag) VALUES (?, ?, ?, ?, ?)', [resultEntrada.insertId, req.body.idFornecedor, 0, resultDate[0].dataPagamento, 'não pago'], (error, resultPag, fields) => {        
                         if(error){
                             return res.status(500).send({
                                 error: error

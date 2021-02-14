@@ -154,10 +154,10 @@ exports.getEntradaPorMes = (req, res, next) => {
                 })
             }
 
-            const result = {
+            const response = {
                 quantidade: result.length,
                 mes: req.params.mes,
-                registros: result.map(entrada => {
+                entradas: result.map(entrada => {
                     return{
                         idEntrada: entrada.idEntrada,
                         quantidadeProduto: entrada.qtdProduto,

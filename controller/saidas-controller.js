@@ -182,7 +182,7 @@ exports.postSaida = (req, res, next) => {
                     }
 
                     conn.query('INSERT INTO saida (idProduto, qtdProduto, qtdCorte, idCliente, dataSaida, valorSaida, valorProduto) VALUES (?, ?, ?, ?, ?, ?, ?)', [req.body.idProduto, req.body.qtdProduto, req.body.qtdCorte, req.body.idCliente, resultDate[0].dataSaida, valorSaida.calculaValorSaida(req.body.valorProduto, req.body.qtdProduto, req.body.qtdCorte), req.body.valorProduto], (error, resultInsert, fields) => {
-                        conn.release()
+                        // conn.release()
                         if(error){
                             return res.status(500).send({
                                 error: error,
@@ -198,24 +198,33 @@ exports.postSaida = (req, res, next) => {
                             })
                         }
 
-                        const response = {
-                            mensagem: "Saída cadastrada com sucesso",
-                            saidaCriada: {
-                                idSaida: resultInsert.insertId,
-                                idProduto: req.body.idProduto,
-                                qtdProduto: req.body.qtdProduto,
-                                qtdCorte: req.body.qtdCorte,
-                                idFornecedor: req.body.idFornecedor,
-                                dataSaida: req.body.dataSaida,
-                                request: {
-                                    tipo: 'GET',
-                                    descricao: 'Retorna todas as saidas',
-                                    url: 'https://morangandoapi.herokuapp.com/saidas/'
+                        conn.query('UPDATE produto SET qtdEstoque = ? WHERE idProduto = ?', [qtdProdutoEstoque, req.body.idProduto], (error, resultUpdate, fields) => {
+                            conn.release()
+                            if(error){
+                                return res.status(500).send({
+                                    error: error,
+                                    response: null
+                                })
+                            }
+
+                            const response = {
+                                mensagem: "Saída cadastrada com sucesso",
+                                saidaCriada: {
+                                    idSaida: resultInsert.insertId,
+                                    idProduto: req.body.idProduto,
+                                    qtdProduto: req.body.qtdProduto,
+                                    qtdCorte: req.body.qtdCorte,
+                                    idFornecedor: req.body.idFornecedor,
+                                    dataSaida: req.body.dataSaida,
+                                    request: {
+                                        tipo: 'GET',
+                                        descricao: 'Retorna todas as saidas',
+                                        url: 'https://morangandoapi.herokuapp.com/saidas/'
+                                    }
                                 }
                             }
-                        }
-            
-                        return res.status(200).send({response})
+                            return res.status(200).send({response})
+                        })            
                     })
                 })                
             })

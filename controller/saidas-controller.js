@@ -181,7 +181,7 @@ exports.postSaida = (req, res, next) => {
                         })
                     }
 
-                    conn.query('INSERT INTO saida (idProduto, qtdProduto, qtdCorte, idCliente, dataSaida, valorSaida, valorProduto) VALUES (?, ?, ?, ?, ?, ?)', [req.body.idProduto, req.body.qtdProduto, req.body.qtdCorte, req.body.idCliente, resultDate[0].dataSaida, valorSaida.calculaValorSaida(req.body.valorProduto, req.body.qtdProduto, req.body.qtdCorte), req.body.valorProduto], (error, resultInsert, fields) => {
+                    conn.query('INSERT INTO saida (idProduto, qtdProduto, qtdCorte, idCliente, dataSaida, valorSaida, valorProduto) VALUES (?, ?, ?, ?, ?, ?, ?)', [req.body.idProduto, req.body.qtdProduto, req.body.qtdCorte, req.body.idCliente, resultDate[0].dataSaida, valorSaida.calculaValorSaida(req.body.valorProduto, req.body.qtdProduto, req.body.qtdCorte), req.body.valorProduto], (error, resultInsert, fields) => {
                         // conn.release()
                         if(error){
                             return res.status(500).send({

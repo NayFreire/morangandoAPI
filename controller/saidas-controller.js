@@ -1,5 +1,6 @@
 const mysql = require('../mysql').pool
 const calculoSaida = require('../math/valorSaida')
+const valorSaida = require('../math/valorSaida')
 
 exports.getSaidas = (req, res, next) => {
     mysql.getConnection((error, conn) => {
@@ -13,6 +14,8 @@ exports.getSaidas = (req, res, next) => {
                     saida.idSaida, 
                     saida.qtdProduto, 
                     saida.qtdCorte,
+                    saida.valorProduto,
+                    saida.valorSaida,
                     DATE_FORMAT(saida.dataSaida, '%d/%m/%Y') AS dataSaida, 
                     colabs.idColab,
                     colabs.nome, 
@@ -44,6 +47,8 @@ exports.getSaidas = (req, res, next) => {
                             idProduto: saida.idProduto,
                             qtdProduto: saida.qtdProduto,
                             qtdCorte: saida.qtdCorte,
+                            valorProduto: saida.valorProduto,
+                            valorSaida: saida.valorSaida,
                             cliente: {
                                 idCliente: saida.idColab,
                                 nome: saida.nome
@@ -83,7 +88,9 @@ exports.getSaida = (req, res, next) => {
                     saida.idSaida, 
                     saida.qtdProduto, 
                     saida.qtdCorte,
-                    saida.dataSaida, 
+                    saida.valorProduto,
+                    saida.valorSaida,
+                    DATE_FORMAT(saida.dataSaida, '%d/%m/%Y') AS dataSaida, 
                     colabs.idColab,
                     colabs.nome, 
                     produto.idProduto,
@@ -92,7 +99,7 @@ exports.getSaida = (req, res, next) => {
                     FROM saida INNER JOIN colabs 
                     ON saida.idCliente = colabs.idColab 
                     INNER JOIN produto 
-                    ON saida.idProduto = produto.idProduto 
+                    ON saida.idProduto = produto.idProduto
                     WHERE idSaida = ?`, [req.params.idSaida], (error, result, fields) => {
             conn.release()
             if(error){
@@ -113,6 +120,8 @@ exports.getSaida = (req, res, next) => {
                         qtdProduto: result[0].qtdProduto,
                         qtdCorte: result[0].qtdCorte,
                         dataSaida: result[0].dataSaida,
+                        valorProduto: result[0].valorProduto,
+                        valorSaida: result[0].valorSaida,
                         fornecedor: {
                             idCliente: result[0].idColab,
                             nome: result[0].nome
@@ -172,7 +181,7 @@ exports.postSaida = (req, res, next) => {
                         })
                     }
 
-                    conn.query('INSERT INTO saida (idProduto, qtdProduto, qtdCorte, idCliente, dataSaida, valorProduto) VALUES (?, ?, ?, ?, ?, ?)', [req.body.idProduto, req.body.qtdProduto, req.body.qtdCorte, req.body.idCliente, resultDate[0].dataSaida, req.body.valorProduto], (error, resultInsert, fields) => {
+                    conn.query('INSERT INTO saida (idProduto, qtdProduto, qtdCorte, idCliente, dataSaida, valorSaida, valorProduto) VALUES (?, ?, ?, ?, ?, ?)', [req.body.idProduto, req.body.qtdProduto, req.body.qtdCorte, req.body.idCliente, resultDate[0].dataSaida, valorSaida.calculaValorSaida(req.body.valorProduto, req.body.qtdProduto, req.body.qtdCorte), req.body.valorProduto], (error, resultInsert, fields) => {
                         // conn.release()
                         if(error){
                             return res.status(500).send({

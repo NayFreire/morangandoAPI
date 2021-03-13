@@ -5,8 +5,10 @@ exports.calculaValorSaida = (valorProduto, qtdProduto, qtdCorte) => {
         })
     }
 
-    if(!qtdCorte){
-        qtdCorte = 0
+    if(qtdCorte > qtdProduto){
+        return res.status(400).send({
+            mensagem: "A quantidade de corte não pode ser maior do que a quantidade de produtos"
+        })
     }
 
     let valor = valorProduto * (qtdProduto - qtdCorte) 

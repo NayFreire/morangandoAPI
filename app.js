@@ -1,4 +1,5 @@
 const express = require('express')
+const cors = require('cors')
 const app = express()
 const morgan = require('morgan')
 const bodyParser = require('body-parser')
@@ -15,6 +16,7 @@ const rotasPagamentos = require('./routes/pagamentos')
 app.use(morgan('dev'))
 app.use(bodyParser.urlencoded({extended: false}))
 app.use(bodyParser.json())
+app.use(cors())
 
 //Header control access
 app.use((req, res, next) => {

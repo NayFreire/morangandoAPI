@@ -278,20 +278,14 @@ exports.postEntrada = (req, res, next) => {
                                         idEntrada: resultEntrada.insertId,
                                         idFornecedor: req.body.idFornecedor
                                     }
-                                }
-                    
+                                }                    
                                 return res.status(200).send({response})
                             })
                         })
-        
-                        
                     }) 
                 })
             })
-
-        })        
-
-        
+        }) 
     })
 }
 
@@ -336,7 +330,6 @@ exports.updateEntrada = (req, res, next) => {
                         url: 'https://morangandoapi.herokuapp.com/entradas/'
                     }
                 }
-
                 return res.status(202).send({response})
             })
         })
